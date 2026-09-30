@@ -1,0 +1,7 @@
+{
+  "name": "ระบบบริหารทรัพยากรบุคคล (G-HR)",
+  "description": "ระบบบริหารทรัพยากรบุคคลภาครัฐ - ทะเบียนประวัติข้าราชการ ก.พ. 7 อิเล็กทรอนิกส์ และกล่องข้อความแจ้งเตือน",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

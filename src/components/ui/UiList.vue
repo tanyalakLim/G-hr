@@ -1,0 +1,5 @@
+<template>
+  <div class="divide-y divide-slate-100">
+    <slot />
+  </div>
+</template>
