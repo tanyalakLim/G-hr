@@ -77,11 +77,17 @@
       <div class="pt-3 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap items-center gap-2.5 sm:gap-3">
         <!-- สังกัด -->
         <div class="w-full lg:flex-1 min-w-[160px]">
-          <UiSelect
-            v-model="selectedDepartment"
-            :options="departmentOptions"
-            select-class="bg-slate-50 border-slate-200 focus:ring-0 focus:border-blue-500"
-          />
+          <button
+            id="btn-select-department-tree"
+            type="button"
+            class="w-full h-10 px-3 flex items-center justify-between gap-2 rounded-lg border text-xs font-medium text-left transition-colors cursor-pointer  border-slate-200 hover:border-blue-500"
+            @click="isDepartmentModalOpen = true"
+          >
+            <span class="truncate" :class="selectedDepartment === 'all' ? 'text-slate-800' : 'text-slate-700'">
+              {{ selectedDepartment === 'all' ? 'สังกัด/ส่วนราชการ (ทั้งหมด)' : selectedDepartment }}
+            </span>
+            <ChevronDown class="w-4 h-4 text-slate-400 flex-shrink-0" />
+          </button>
         </div>
 
         <!-- ประเภทตำแหน่ง -->
@@ -159,7 +165,7 @@
           <button
             type="button"
             class="hover:text-red-600 transition-colors cursor-pointer"
-            @click="selectedDepartment = 'all'"
+            @click="selectedDepartment = 'all'; selectedDepartmentUnitId = undefined"
           >
             <X class="w-3.5 h-3.5" />
           </button>
@@ -530,6 +536,14 @@
         </div>
       </template>
     </UiModal>
+
+    <!-- Department Tree Modal (เลือกสังกัดจากโครงสร้างหน่วยงาน) -->
+    <DepartmentTreeModal
+      :is-open="isDepartmentModalOpen"
+      :selected-unit-id="selectedDepartmentUnitId"
+      @close="isDepartmentModalOpen = false"
+      @select="handleDepartmentSelect"
+    />
   </div>
 </template>
 
@@ -560,7 +574,10 @@ import {
   Calendar,
   Eye,
   FileClock,
+  ChevronDown,
 } from 'lucide-vue-next';
+import DepartmentTreeModal from './DepartmentTreeModal.vue';
+import type { OrgUnit } from '../../data/organizationData';
 import type { PersonnelRecord, PersonnelCategory } from '../../types';
 import { INITIAL_PERSONNEL } from '../../data/personnelData';
 import { useToast } from '../../composables/useToast';
@@ -587,22 +604,25 @@ const sortBy = ref('date_desc');
 const currentPage = ref(1);
 const pageSize = ref(6);
 const selectedPersonnel = ref<PersonnelRecord | null>(null);
+const isDepartmentModalOpen = ref(false);
+const selectedDepartmentUnitId = ref<string | undefined>(undefined);
+
+const handleDepartmentSelect = (unit: OrgUnit | null) => {
+  if (unit) {
+    selectedDepartment.value = unit.name;
+    selectedDepartmentUnitId.value = unit.id;
+  } else {
+    selectedDepartment.value = 'all';
+    selectedDepartmentUnitId.value = undefined;
+  }
+  isDepartmentModalOpen.value = false;
+};
 
 const searchConditionOptions = [
   { value: 'name', label: 'ชื่อ - นามสกุล บุคลากร' },
   { value: 'citizen_id', label: 'เลขประจำตัวประชาชน (13 หลัก)' },
   { value: 'position_no', label: 'เลขที่ตำแหน่ง' },
   { value: 'job_title', label: 'ตำแหน่งในสายงาน' },
-];
-
-const departmentOptions = [
-  { value: 'all', label: 'สังกัด/ส่วนราชการ (ทั้งหมด)' },
-  { value: 'สำนักปลัด', label: 'สำนักปลัดกรุงเทพมหานคร' },
-  { value: 'สำนักงานคณะกรรมการข้าราชการกรุงเทพมหานคร', label: 'สำนักงานคณะกรรมการข้าราชการกรุงเทพมหานคร' },
-  { value: 'สำนักการระบายน้ำ', label: 'สำนักการระบายน้ำ' },
-  { value: 'สำนักการศึกษา', label: 'สำนักการศึกษา' },
-  { value: 'สำนักยุทธศาสตร์', label: 'สำนักยุทธศาสตร์และประเมินผล' },
-  { value: 'สำนักการคลัง', label: 'สำนักการคลัง' },
 ];
 
 const positionTypeOptions = [
@@ -675,6 +695,7 @@ const handleClearFilters = () => {
   searchQuery.value = '';
   activeQueryChip.value = '';
   selectedDepartment.value = 'all';
+  selectedDepartmentUnitId.value = undefined;
   selectedPositionType.value = 'all';
   selectedLevel.value = 'all';
   onlyProbation.value = false;

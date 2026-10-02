@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)"
+    ]
+  },
+  "env": {
+        "ANTHROPIC_AUTH_TOKEN": "37d94fdcb84a424a88164ca8dfea4a87.ePBVzAmtxqWpi1sK",
+        "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+        "ANTHROPIC_DEFAULT_SONNET_MODEL": "GLM-5.3 Flash",
+        "API_TIMEOUT_MS": "3000000"
+    }
+}

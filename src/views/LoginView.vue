@@ -71,18 +71,41 @@
             </div>
           </div>
 
+          <!-- ประเภทผู้ใช้งาน -->
+          <div>
+            <span class="block text-sm font-semibold text-slate-700 mb-1.5">เข้าสู่ระบบด้วยสิทธิ์</span>
+            <div class="grid grid-cols-2 gap-2.5">
+              <button
+                v-for="opt in roleOptions"
+                :key="opt.role"
+                type="button"
+                class="flex items-start gap-2.5 rounded-xl border p-3 text-left transition-all cursor-pointer"
+                :class="
+                  selectedRole === opt.role
+                    ? 'border-bma-600 bg-bma-50 ring-2 ring-bma-500/20'
+                    : 'border-slate-200 hover:border-slate-300 bg-white'
+                "
+                @click="selectedRole = opt.role"
+              >
+                <component :is="opt.icon" class="w-4.5 h-4.5 mt-0.5 flex-shrink-0" :class="selectedRole === opt.role ? 'text-bma-700' : 'text-slate-400'" />
+                <span class="min-w-0">
+                  <span class="block text-sm font-semibold text-slate-800">{{ opt.label }}</span>
+                  <span class="block text-[11px] text-slate-500 leading-snug">{{ opt.desc }}</span>
+                </span>
+              </button>
+            </div>
+          </div>
+
           <!-- จดจำรหัสผ่าน -->
-          <label class="flex items-center gap-2.5 cursor-pointer select-none">
+         <!--  <label class="flex items-center gap-2.5 cursor-pointer select-none">
             <input v-model="rememberMe" type="checkbox" class="w-4 h-4 rounded border-slate-300 accent-bma-700 cursor-pointer" />
             <span class="text-sm text-slate-600">จดจำรหัสผ่านไว้ในเครื่องนี้</span>
-          </label>
+          </label> -->
 
           <!-- Sign in -->
-          <UiButton variant="primary" size="md" class="w-full justify-center !py-3.5" type="submit">
-            เข้าสู่ระบบ (Sign In)
-            <template #icon>
-              <ArrowRight class="w-4 h-4" />
-            </template>
+          <UiButton variant="primary" size="md" class="w-full justify-center py-4" type="submit">
+            เข้าสู่ระบบ
+            <ArrowRight class="w-4 h-4" />
           </UiButton>
         </form>
       </div>
@@ -198,7 +221,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { ArrowRight, CheckCircle2, Eye, EyeOff } from 'lucide-vue-next';
+import { ArrowRight, CheckCircle2, Eye, EyeOff, ShieldCheck, UserRound } from 'lucide-vue-next';
+import type { AuthRole } from '../composables/useAuth';
 import logoUrl from '../assets/logo.png';
 import { UiBadge, UiButton } from '../components/ui';
 import { useAuth } from '../composables/useAuth';
@@ -212,6 +236,12 @@ const account = ref('');
 const password = ref('');
 const showPassword = ref(false);
 const rememberMe = ref(true);
+const selectedRole = ref<AuthRole>('admin');
+
+const roleOptions: { role: AuthRole; label: string; desc: string; icon: typeof ShieldCheck }[] = [
+  { role: 'admin', label: 'เจ้าหน้าที่ (Admin)', desc: 'จัดการข้อมูลบุคคลทั้งระบบ', icon: ShieldCheck },
+  { role: 'user', label: 'บุคลากร (User)', desc: 'ดูข้อมูลและทำเรื่องราชการของตนเอง', icon: UserRound },
+];
 
 // จำลอง: ถือว่าชื่อผู้ใช้งานถูกต้องเมื่อกรอกอย่างน้อย 4 ตัวอักษร
 const isAccountValid = computed(() => account.value.trim().length >= 4);
@@ -225,8 +255,8 @@ const handleSignIn = () => {
     show('กรุณากรอกรหัสผ่าน');
     return;
   }
-  signIn();
-  router.push('/home');
+  signIn(selectedRole.value, selectedRole.value === 'user' ? 'สมชาย ใจดี' : undefined);
+  router.push(selectedRole.value === 'user' ? '/user/home' : '/home');
 };
 
 // ข้อมูลจำลอง "ภาพรวมหน่วยงาน" ในการ์ดขวา

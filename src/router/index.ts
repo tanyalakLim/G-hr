@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
-import { isAuthenticated } from '../composables/useAuth';
+import { isAuthenticated, authRole } from '../composables/useAuth';
 
 // หมวด placeholder แบบ accordion: /<menu> → redirect เข้า submenu แรก
 // และ /<menu>/:subId → PlaceholderView (Sidebar ไฮไลต์จาก params.subId)
@@ -37,6 +37,26 @@ const routes: RouteRecordRaw[] = [
     name: 'home',
     component: () => import('../views/HomeView.vue'),
     meta: { menu: 'home', title: 'หน้าแรก' },
+  },
+
+  // --- ฝั่งบุคลากร (User) — layout แยกจากฝั่ง Admin ---
+  {
+    path: '/user',
+    component: () => import('../layouts/UserLayout.vue'),
+    children: [
+      {
+        path: 'home',
+        name: 'user-home',
+        component: () => import('../views/UserHomeView.vue'),
+        meta: { title: 'หน้าแรก' },
+      },
+      {
+        path: 'check-in',
+        name: 'user-check-in',
+        component: () => import('../views/UserCheckInView.vue'),
+        meta: { title: 'เช็คอินเวลาลงงาน' },
+      },
+    ],
   },
 
   // --- ทะเบียนประวัติ (records) ---
@@ -229,11 +249,21 @@ const router = createRouter({
 });
 
 // --- Guard: ยังไม่ล็อกอินให้ไป /login เสมอ (ยกเว้นหน้า /login เอง)
-// และถ้าล็อกอินแล้วให้พ้นหน้า /login ไปหน้าแรก
+// และถ้าล็อกอินแล้วให้พ้นหน้า /login ไปหน้าแรกตาม role
+// ฝั่ง user (บุคลากร) เข้าได้เฉพาะ /user/* ส่วน admin เข้าเฉพาะส่วนจัดการ
 router.beforeEach((to) => {
   const authed = isAuthenticated.value;
-  if (!authed && to.path !== '/login') return { path: '/login' };
-  if (authed && to.path === '/login') return { path: '/home' };
+  const isUserArea = to.path.startsWith('/user');
+  const homePath = authRole.value === 'user' ? '/user/home' : '/home';
+
+  if (!authed) {
+    // ยังไม่ล็อกอิน: ไป /login ได้เสมอ (กติกา role ใช้เฉพาะตอนล็อกอินแล้ว)
+    if (to.path === '/login') return;
+    return { path: '/login' };
+  }
+  if (to.path === '/login') return { path: homePath };
+  if (authRole.value === 'user' && !isUserArea) return { path: '/user/home' };
+  if (authRole.value === 'admin' && isUserArea) return { path: '/home' };
 });
 
 export default router;

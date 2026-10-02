@@ -1,6 +1,6 @@
 <template>
-  <!-- หน้าล็อกอินแสดงเต็มจอ ไม่มี Sidebar/Header -->
-  <div v-if="isLoginRoute" class="h-full overflow-hidden text-slate-800 antialiased relative">
+  <!-- หน้าล็อกอินและฝั่งบุคลากร (User) แสดงเต็มจอ ไม่ใช้ Sidebar/Header ของ Admin -->
+  <div v-if="isLoginRoute || isUserRoute" class="h-full overflow-hidden text-slate-800 antialiased relative">
     <RouterView />
     <Toast :message="toastMessage" />
   </div>
@@ -42,6 +42,7 @@ const { message: toastMessage } = useToast();
 const route = useRoute();
 
 const isLoginRoute = computed(() => route.path === '/login');
+const isUserRoute = computed(() => route.path.startsWith('/user'));
 
 const handleToggleSidebar = () => {
   if (window.innerWidth < 1024) {
