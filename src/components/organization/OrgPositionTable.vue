@@ -156,7 +156,7 @@
             <!-- Expanded Row Detail -->
             <tr v-if="expandedRowIds.includes(pos.id)">
               <td colspan="9" class="px-3 py-3 bg-slate-50/40">
-                <div class="ml-6 lg:ml-10 rounded-xl border border-slate-200 bg-white overflow-hidden">
+                <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
                   <table class="w-full text-left border-collapse">
                     <thead>
                       <tr class="bg-slate-50/80 border-b border-slate-200/90 text-[11px] font-semibold text-slate-500 select-none">

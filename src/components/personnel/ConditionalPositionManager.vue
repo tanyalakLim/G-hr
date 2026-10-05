@@ -82,7 +82,7 @@
 
                     <!-- แถวรายละเอียดตำแหน่ง (ขยาย) -->
                     <tr v-if="expandedId === row.id">
-                      <td colspan="9" class="px-4 sm:px-10 py-3 bg-slate-50/60">
+                      <td colspan="9" class="p-3 bg-slate-50/60">
                         <div class="overflow-x-auto rounded-lg border border-slate-200/90 bg-white">
                           <table class="w-full text-left border-collapse">
                             <thead>
