@@ -224,13 +224,13 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/evaluations/competency',
     name: 'evaluations-competency',
-    component: () => import('../views/PlaceholderView.vue'),
+    component: () => import('../components/evaluations/CompetencyList.vue'),
     meta: { menu: 'evaluations', submenu: 'competency', title: 'สมรรถนะ' },
   },
   {
     path: '/evaluations/strategy',
     name: 'evaluations-strategy',
-    component: () => import('../views/PlaceholderView.vue'),
+    component: () => import('../components/evaluations/StrategyList.vue'),
     meta: { menu: 'evaluations', submenu: 'strategy', title: 'ยุทธศาสตร์' },
   },
 

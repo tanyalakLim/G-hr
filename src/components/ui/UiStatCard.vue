@@ -5,7 +5,7 @@
     class="rounded-xl border border-slate-200/90 bg-white p-4 flex flex-col gap-2 transition-colors hover:border-slate-300"
   >
     <div class="flex items-start justify-between gap-2">
-      <div class="text-[11px] font-semibold text-slate-500 leading-snug min-w-0 truncate pt-2">{{ title }}</div>
+      <div class="text-[11px] font-semibold text-slate-500 leading-snug min-w-0 pt-2" :class="wrapTitle ? '' : 'truncate'">{{ title }}</div>
       <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" :class="toneClasses[tone]">
         <component :is="icon" class="w-4 h-4" />
       </div>
@@ -54,6 +54,8 @@ withDefaults(
     icon: Component;
     /** แนวนอน (ค่าเริ่มต้น) หรือแนวตั้งสำหรับพื้นที่แคบหลายการ์ด */
     layout?: 'horizontal' | 'vertical';
+    /** อนุญาตให้หัวข้อตัดขึ้นบรรทัดใหม่แทนการ truncate (ใช้กับหัวข้อยาว) */
+    wrapTitle?: boolean;
   }>(),
   {
     hint: '',
@@ -61,6 +63,7 @@ withDefaults(
     unit: '',
     tone: 'blue',
     layout: 'horizontal',
+    wrapTitle: false,
   }
 );
 
