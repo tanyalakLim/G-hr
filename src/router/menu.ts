@@ -112,10 +112,10 @@ export const menuItems: MenuItem[] = [
     ],
   },
 
- /*  // 10. ออกคำสั่ง
+ // 10. ออกคำสั่ง
   { id: 'orders', label: 'ออกคำสั่ง', icon: Award },
 
-  // 11. สรรหา
+ /*   // 11. สรรหา
   {
     id: 'recruitment',
     label: 'สรรหา',

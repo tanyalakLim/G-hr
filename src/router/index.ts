@@ -234,6 +234,14 @@ const routes: RouteRecordRaw[] = [
     meta: { menu: 'evaluations', submenu: 'strategy', title: 'ยุทธศาสตร์' },
   },
 
+  // --- ออกคำสั่ง ---
+  {
+    path: '/orders',
+    name: 'orders',
+    component: () => import('../components/orders/OrderList.vue'),
+    meta: { menu: 'orders', title: 'ออกคำสั่ง' },
+  },
+
   // --- ไม่พบหน้า ---
   {
     path: '/:pathMatch(.*)*',
