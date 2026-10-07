@@ -175,8 +175,51 @@ const routes: RouteRecordRaw[] = [
     meta: { menu: 'probation', title: 'ทดลองปฏิบัติหน้าที่ราชการ' },
   },
 
+  // --- สรรหา (recruitment) ---
+  {
+    path: '/recruitment/recruitment_exam_round',
+    name: 'recruitment-exam-rounds',
+    component: () => import('../components/recruitment/RecruitmentExamRounds.vue'),
+    meta: {
+      menu: 'recruitment',
+      submenu: 'recruitment_exam',
+      nestedSubmenu: 'recruitment_exam_round',
+      title: 'จัดการรอบสอบแข่งขัน',
+    },
+  },
+  {
+    path: '/recruitment/recruitment_exam_round/new',
+    name: 'recruitment-exam-round-new',
+    component: () => import('../components/recruitment/RecruitmentExamRoundForm.vue'),
+    meta: {
+      menu: 'recruitment',
+      submenu: 'recruitment_exam',
+      nestedSubmenu: 'recruitment_exam_round',
+      title: 'เพิ่มรอบสอบแข่งขัน',
+    },
+  },
+  {
+    path: '/recruitment/recruitment_website',
+    name: 'recruitment-website-settings',
+    component: () => import('../components/recruitment/RecruitmentWebsiteSettings.vue'),
+    meta: { menu: 'recruitment', submenu: 'recruitment_website', title: 'ตั้งค่าเว็บสรรหา' },
+  },
+
   // --- หมวด placeholder แบบ accordion ---
   ...accordionPlaceholder('recruitment', 'recruitment_website'),
+
+  // สรรหา — กลุ่มย่อย (redirect เข้ารายการแรกของแต่ละกลุ่ม) และ placeholder ระดับ 3
+  { path: '/recruitment/recruitment_exam', redirect: '/recruitment/recruitment_exam_round' },
+  { path: '/recruitment/recruitment_select', redirect: '/recruitment/recruitment_select_round' },
+  { path: '/recruitment/recruitment_other', redirect: '/recruitment/recruitment_other_round' },
+  // หน้าจริงที่มีอยู่ — redirect จาก path ระดับ 3 ที่ Sidebar สร้าง
+  {
+    path: '/recruitment/recruitment_exam/recruitment_exam_round',
+    redirect: '/recruitment/recruitment_exam_round',
+  },
+  nestedPlaceholder('recruitment', 'recruitment_exam'),
+  nestedPlaceholder('recruitment', 'recruitment_select'),
+  nestedPlaceholder('recruitment', 'recruitment_other'),
   ...accordionPlaceholder('placement', 'placement_pass'),
   ...accordionPlaceholder('dismissal', 'dismissal_retirement'),
   ...accordionPlaceholder('insignia', 'insignia_round'),

@@ -19,6 +19,7 @@ import UiSelect from './UiSelect.vue';
 import UiStatCard from './UiStatCard.vue';
 import UiSplitter from './UiSplitter.vue';
 import UiTabs from './UiTabs.vue';
+import UiTextEditor from './UiTextEditor.vue';
 import UiToggleGroup from './UiToggleGroup.vue';
 import UiToolbar from './UiToolbar.vue';
 import UiTree from './UiTree.vue';
@@ -46,6 +47,7 @@ export {
   UiStatCard,
   UiSplitter,
   UiTabs,
+  UiTextEditor,
   UiToggleGroup,
   UiToolbar,
   UiTree,

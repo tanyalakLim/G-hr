@@ -115,7 +115,7 @@ export const menuItems: MenuItem[] = [
  // 10. ออกคำสั่ง
   { id: 'orders', label: 'ออกคำสั่ง', icon: Award },
 
- /*   // 11. สรรหา
+// 11. สรรหา
   {
     id: 'recruitment',
     label: 'สรรหา',
@@ -123,18 +123,36 @@ export const menuItems: MenuItem[] = [
     isAccordion: true,
     subItems: [
       { id: 'recruitment_website', label: 'ตั้งค่าเว็บสรรหา' },
-      { id: 'recruitment_exam_round', label: 'จัดการรอบสอบแข่งขัน' },
-      { id: 'recruitment_exam_stat', label: 'สถิติสมัครสอบแข่งขัน' },
-      { id: 'recruitment_exam_report', label: 'รายงานสอบแข่งขัน' },
-      { id: 'recruitment_select_round', label: 'จัดการรอบคัดเลือก' },
-      { id: 'recruitment_select_list', label: 'จัดการรายชื่อคัดเลือก' },
-      { id: 'recruitment_select_stat', label: 'สถิติสมัครคัดเลือก' },
-      { id: 'recruitment_other_round', label: 'จัดการรอบคัดเลือกอื่นๆ' },
-      { id: 'recruitment_other_stat', label: 'สถิติสมัครคัดเลือกอื่นๆ' },
+      {
+        id: 'recruitment_exam',
+        label: 'สอบแข่งขัน',
+        subItems: [
+          { id: 'recruitment_exam_round', label: 'จัดการรอบสอบแข่งขัน' },
+          { id: 'recruitment_exam_stat', label: 'สถิติสมัครสอบแข่งขัน' },
+          { id: 'recruitment_exam_report', label: 'รายงานสอบแข่งขัน' },
+        ],
+      },
+      {
+        id: 'recruitment_select',
+        label: 'คัดเลือก',
+        subItems: [
+          { id: 'recruitment_select_round', label: 'จัดการรอบคัดเลือก' },
+          { id: 'recruitment_select_list', label: 'จัดการรายชื่อคัดเลือก' },
+          { id: 'recruitment_select_stat', label: 'สถิติสมัครคัดเลือก' },
+        ],
+      },
+      {
+        id: 'recruitment_other',
+        label: 'คัดเลือกอื่นๆ',
+        subItems: [
+          { id: 'recruitment_other_round', label: 'จัดการรอบคัดเลือกอื่นๆ' },
+          { id: 'recruitment_other_stat', label: 'สถิติสมัครคัดเลือกอื่นๆ' },
+        ],
+      },
     ],
   },
 
-  // 12. บรรจุ แต่งตั้ง ย้าย โอน
+ /*     // 12. บรรจุ แต่งตั้ง ย้าย โอน
   {
     id: 'placement',
     label: 'บรรจุ แต่งตั้ง ย้าย โอน',
