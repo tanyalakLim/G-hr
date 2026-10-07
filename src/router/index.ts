@@ -241,6 +241,19 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../components/orders/OrderList.vue'),
     meta: { menu: 'orders', title: 'ออกคำสั่ง' },
   },
+  {
+    path: '/orders/:id/edit',
+    name: 'orders-edit',
+    component: () => import('../components/orders/OrderEditDetailView.vue'),
+    meta: { menu: 'orders', title: 'แก้ไขรายละเอียดคำสั่ง' },
+  },
+  {
+    path: '/orders/:id/view',
+    name: 'orders-view',
+    component: () => import('../components/orders/OrderEditDetailView.vue'),
+    props: { readonly: true },
+    meta: { menu: 'orders', title: 'ดูรายละเอียดคำสั่ง' },
+  },
 
   // --- ไม่พบหน้า ---
   {

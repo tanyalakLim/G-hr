@@ -47,7 +47,7 @@
         <!-- แถว 2: คำค้นหา (+ เพิ่มคำสั่ง) + ล้างตัวกรอง -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end pt-3 border-t border-slate-100">
           <div class="lg:col-span-2 flex items-center gap-2.5">
-            <UiButton id="btn-add-order" size="md" class="whitespace-nowrap shrink-0" @click="show('เพิ่มคำสั่ง ยังไม่เปิดใช้งาน')">
+            <UiButton id="btn-add-order" size="md" class="whitespace-nowrap shrink-0" @click="isAddOrderModalOpen = true">
               <template #icon>
                 <Plus class="w-4 h-4" />
               </template>
@@ -169,12 +169,84 @@
         />
       </div>
     </div>
+
+    <!-- Modal: เพิ่มคำสั่ง -->
+    <UiModal
+      :is-open="isAddOrderModalOpen"
+      title="เพิ่มคำสั่ง"
+      subtitle="ระบุประเภทและเลขที่คำสั่งเพื่อเริ่มสร้างคำสั่งใหม่"
+      @close="isAddOrderModalOpen = false"
+    >
+      <template #icon>
+        <Plus class="w-5 h-5 text-blue-900" />
+      </template>
+
+      <div class="space-y-3.5 text-xs">
+        <!-- ประเภทคำสั่ง -->
+        <div class="space-y-1">
+          <label class="block font-medium text-slate-700">ประเภทคำสั่ง <span class="text-rose-500">*</span></label>
+          <UiSelect
+            id="add-order-type"
+            v-model="addOrderForm.type"
+            :options="typeOptions.filter((t) => t.value !== 'all')"
+            size="lg"
+          />
+        </div>
+
+        <!-- คำสั่งเลขที่ / ปี พ.ศ. -->
+        <div class="space-y-1">
+          <label class="block font-medium text-slate-700">คำสั่งเลขที่ / ปี พ.ศ. <span class="text-rose-500">*</span></label>
+          <div class="flex items-center gap-2">
+            <div class="flex-1 min-w-0">
+              <UiInput
+                id="add-order-no"
+                v-model="addOrderForm.orderNo"
+                size="lg"
+                placeholder="เช่น สนพ. 25/9"
+              />
+            </div>
+            <span class="text-slate-400 font-medium flex-shrink-0">/</span>
+            <div class="relative flex-shrink-0">
+              <UiSelect
+                id="add-order-year"
+                v-model="addOrderForm.fiscalYear"
+                :options="addOrderYearOptions"
+                size="lg"
+                select-class="pl-8"
+              />
+              <CalendarDays class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="flex items-center justify-end gap-2">
+          <button
+            type="button"
+            class="px-4 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
+            @click="isAddOrderModalOpen = false"
+          >
+            ยกเลิก
+          </button>
+          <UiButton size="md" @click="confirmAddOrder">
+            <template #icon>
+              <Check class="w-4 h-4" />
+            </template>
+            สร้างคำสั่ง
+          </UiButton>
+        </div>
+      </template>
+    </UiModal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import {
+  CalendarDays,
+  Check,
   Copy,
   Eye,
   MoreVertical,
@@ -189,6 +261,8 @@ import {
   UiButton,
   UiDropdownButton,
   UiEmptyState,
+  UiInput,
+  UiModal,
   UiPagination,
   UiSearchInput,
   UiSelect,
@@ -300,7 +374,41 @@ const rowMenuItems = [
   { value: 'delete', label: 'ลบ', icon: X },
 ];
 
+const router = useRouter();
+
+// --- Modal เพิ่มคำสั่ง
+const isAddOrderModalOpen = ref(false);
+const addOrderForm = ref({
+  type: 'personnel',
+  orderNo: '',
+  fiscalYear: '2569',
+});
+
+const addOrderYearOptions = [
+  { value: '2569', label: '2569' },
+  { value: '2568', label: '2568' },
+  { value: '2567', label: '2567' },
+];
+
+const confirmAddOrder = () => {
+  if (!addOrderForm.value.orderNo.trim()) {
+    show('กรุณาระบุคำสั่งเลขที่');
+    return;
+  }
+  isAddOrderModalOpen.value = false;
+  show(`สร้างคำสั่ง ${addOrderForm.value.orderNo}/${addOrderForm.value.fiscalYear} เรียบร้อยแล้ว`);
+  addOrderForm.value.orderNo = '';
+};
+
 const handleRowMenu = (action: string, item: Order) => {
+  if (action === 'edit') {
+    router.push(`/orders/${item.id}/edit`);
+    return;
+  }
+  if (action === 'detail') {
+    router.push(`/orders/${item.id}/view`);
+    return;
+  }
   show(`${action} — ${item.orderNo} (ยังไม่เปิดใช้งาน)`);
 };
 

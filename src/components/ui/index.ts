@@ -14,6 +14,7 @@ import UiModal from './UiModal.vue';
 import PageActionBar from './PageActionBar.vue';
 import UiPagination from './UiPagination.vue';
 import UiSearchInput from './UiSearchInput.vue';
+import UiSideNav from './UiSideNav.vue';
 import UiSelect from './UiSelect.vue';
 import UiStatCard from './UiStatCard.vue';
 import UiSplitter from './UiSplitter.vue';
@@ -40,6 +41,7 @@ export {
   PageActionBar,
   UiPagination,
   UiSearchInput,
+  UiSideNav,
   UiSelect,
   UiStatCard,
   UiSplitter,
@@ -51,3 +53,4 @@ export {
 };
 
 export type { AppTableColumn } from '../../types';
+export type { UiSideNavItem } from './UiSideNav.vue';

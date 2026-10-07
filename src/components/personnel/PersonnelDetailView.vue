@@ -200,41 +200,8 @@
       data-purpose="personnel-detail-unified-card"
     >
       <!-- BEGIN: Left Vertical Navigation Menu (Inside unified card) -->
-      <div
-        class="w-full lg:w-48 flex-shrink-0 bg-white border-b lg:border-b-0 lg:border-r border-slate-200 p-3 sm:p-4 space-y-1"
-        data-purpose="personnel-detail-sidebar"
-      >
-        <button
-          v-for="item in mainSections"
-          :key="item.id"
-          type="button"
-          class="w-full h-11 px-3.5 rounded-xl flex items-center justify-between text-xs transition-all cursor-pointer select-none"
-          :class="
-            activeMainSection === item.id
-              ? 'bg-blue-50 text-blue-900 font-bold border border-blue-200/60 shadow-2xs'
-              : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium'
-          "
-          @click="activeMainSection = item.id"
-        >
-          <div class="flex items-center gap-2.5">
-            <component
-              :is="item.icon"
-              class="w-4 h-4"
-              :class="activeMainSection === item.id ? 'text-blue-900' : 'text-slate-400'"
-            />
-            <span>{{ item.label }}</span>
-          </div>
-
-          <!-- Blue indicator dot for active item, Chevron for inactive -->
-          <div
-            v-if="activeMainSection === item.id"
-            class="w-2 h-2 rounded-full bg-blue-900"
-          />
-          <ChevronRight
-            v-else
-            class="w-3.5 h-3.5 text-slate-300"
-          />
-        </button>
+      <div data-purpose="personnel-detail-sidebar" class="w-full">
+        <UiSideNav v-model="activeMainSection" :items="mainSections" />
       </div>
       <!-- END: Left Vertical Navigation Menu -->
 
@@ -1136,7 +1103,7 @@ import { ref, computed, watch } from 'vue';
 import type { PersonnelRecord } from '../../types';
 import { AppTable, type AppTableColumn } from '../ui';
 import { PageActionBar } from '../ui';
-import { UiBadge, UiButton, UiModal } from '../ui';
+import { UiBadge, UiButton, UiModal, UiSideNav } from '../ui';
 import {
   ArrowLeft,
   Download,
