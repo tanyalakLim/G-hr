@@ -56,6 +56,24 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../views/UserCheckInView.vue'),
         meta: { title: 'เช็คอินเวลาลงงาน' },
       },
+      {
+        path: 'records',
+        name: 'user-records',
+        component: () => import('../views/UserRecordsView.vue'),
+        meta: { title: 'ทะเบียนประวัติ' },
+      },
+      {
+        path: 'org-map',
+        name: 'user-org-map',
+        component: () => import('../views/UserOrgMapView.vue'),
+        meta: { title: 'แผนที่องค์กร' },
+      },
+      {
+        path: 'leave',
+        name: 'user-leave',
+        component: () => import('../views/UserLeaveView.vue'),
+        meta: { title: 'การลา' },
+      },
     ],
   },
 

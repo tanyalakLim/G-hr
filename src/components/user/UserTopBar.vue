@@ -24,6 +24,7 @@
           <LayoutGrid class="w-4 h-4" />
           หน้าแรก
         </button>
+       
         <button
           type="button"
           class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-slate-500 hover:text-blue-900 hover:bg-blue-50 transition-colors cursor-pointer"
@@ -186,6 +187,7 @@ import {
   Bookmark,
   CalendarDays,
   ChevronDown,
+  IdCard,
   LayoutGrid,
   LogOut,
   ShieldCheck,
@@ -196,7 +198,7 @@ import { useAuth, displayName } from '../../composables/useAuth';
 import { useInbox } from '../../composables/useInbox';
 import { useToast } from '../../composables/useToast';
 
-withDefaults(defineProps<{ active?: 'home' | null }>(), { active: 'home' });
+withDefaults(defineProps<{ active?: 'home' | 'records' | null }>(), { active: 'home' });
 
 const router = useRouter();
 const { signOut } = useAuth();

@@ -75,14 +75,14 @@
                      hover:border-blue-900/30 hover:shadow-md hover:-translate-y-0.5
                      transition-all duration-200 ease-out cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-900/20
                      flex flex-col items-start"
-              @click.stop="show(`เมนู ${item.title} ยังไม่เปิดใช้งาน`)"
+              @click.stop="item.route ? router.push(item.route) : show(`เมนู ${item.title} ยังไม่เปิดใช้งาน`)"
             >
               <span class="w-10 h-10 rounded-lg bg-blue-50/60 text-blue-900 flex items-center justify-center shrink-0 transition-all duration-200 group-hover:bg-blue-900 group-hover:text-white group-hover:shadow-sm group-hover:shadow-blue-900/30">
                 <component :is="item.icon" class="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
               </span>
               <span class="block mt-3.5 text-sm font-bold text-slate-800 leading-snug transition-colors duration-150 group-hover:text-blue-900">{{ item.title }}</span>
               <span class="block mt-1 mb-4 text-xs text-slate-500 leading-relaxed">{{ item.desc }}</span>
-              <div class="mt-auto pt-1 border-t border-slate-100 flex items-center justify-between self-stretch">
+              <div class="mt-auto pt-2 border-t border-slate-100 flex items-center justify-between self-stretch">
                 <span class="text-[11px] text-slate-400 font-medium">{{ item.footer }}</span>
                 <ArrowUpRight class="w-3.5 h-3.5 text-slate-400 transition-all duration-200 group-hover:text-blue-900 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </div>
@@ -225,11 +225,11 @@ const todayText = computed(() => {
 });
 
 // --- เมนูฟังก์ชันฝั่งบุคลากร
-const menuItems: { icon: typeof IdCard; title: string; desc: string; footer: string }[] = [
-  { icon: Users, title: 'แผนที่องค์กร', desc: 'ดูแผนที่องค์กร, ดาวน์โหลดไฟล์', footer: 'ระบบแผนผังองค์กร กทม.' },
-  { icon: IdCard, title: 'ทะเบียนประวัติ', desc: 'ดูข้อมูล, ยื่นคำร้องขอแก้ไขข้อมูล', footer: 'ก.พ.7 อิเล็กทรอนิกส์' },
+const menuItems: { icon: typeof IdCard; title: string; desc: string; footer: string; route?: string }[] = [
+  { icon: Users, title: 'แผนที่องค์กร', desc: 'ดูแผนที่องค์กร, ดาวน์โหลดไฟล์', footer: 'ระบบแผนผังองค์กร กทม.', route: '/user/org-map' },
+  { icon: IdCard, title: 'ทะเบียนประวัติ', desc: 'ดูข้อมูล, ยื่นคำร้องขอแก้ไขข้อมูล', footer: 'ก.พ.7 อิเล็กทรอนิกส์', route: '/user/records' },
   { icon: ClipboardCheck, title: 'ประเมินบุคคล', desc: 'ตรวจสอบข้อมูลการประเมินบุคคล', footer: 'ระบบประเมิน ก.พ.' },
-  { icon: CalendarDays, title: 'การลา', desc: 'ดู/แก้ไขวันลา, ทำเรื่องลา', footer: 'ระบบลาอิเล็กทรอนิกส์' },
+  { icon: CalendarDays, title: 'การลา', desc: 'ดู/แก้ไขวันลา, ทำเรื่องลา', footer: 'ระบบลาอิเล็กทรอนิกส์', route: '/user/leave' },
   { icon: FolderOpen, title: 'ผลงาน', desc: 'ดู/เพิ่มผลงาน, แนบไฟล์ประกอบ', footer: 'ฐานข้อมูลผลงาน กทม.' },
   { icon: UserCheck, title: 'ขอโอน', desc: 'ประวัติขอโอน, ยื่นคำร้องขอโอน', footer: 'ระบบสายงาน ก.พ.' },
   { icon: Scale, title: 'อุทธรณ์/ร้องทุกข์', desc: 'ทำเรื่องขออุทธรณ์ หรือร้องทุกข์', footer: 'ระบบอุทธรณ์ ก.พ.' },

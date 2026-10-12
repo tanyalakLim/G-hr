@@ -33,7 +33,7 @@ const variantClasses = computed(() => ({
   success: 'text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs',
   accent: 'text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-800 shadow-sm',
   outline:
-    'text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 hover:text-blue-700 shadow-xs',
+    'text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:text-blue-700',
   ghost: 'text-slate-600 bg-transparent hover:bg-slate-100 hover:text-slate-900',
 }));
 
