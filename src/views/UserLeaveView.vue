@@ -7,7 +7,7 @@
           <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">การลา</h1>
           <p class="text-xs text-slate-500 mt-0.5">ดู/แก้ไขวันลา, ทำเรื่องลา · ระบบลาอิเล็กทรอนิกส์ ปีงบประมาณ 2569</p>
         </div>
-        <UiButton variant="primary" size="sm" @click="show('แบบฟอร์มยื่นคำขอลายังไม่เปิดใช้งาน')">
+        <UiButton variant="primary" size="sm" @click="router.push({ name: 'user-leave-new' })">
           <template #icon><Plus class="w-4 h-4" /></template>
           ยื่นคำขอลา
         </UiButton>
@@ -84,66 +84,40 @@
         <div class="xl:col-span-9 order-2">
           <UiCard padding="none">
             <!-- แถบเครื่องมือ -->
-            <div class="px-4 sm:px-5 py-3 flex items-center justify-between gap-3 flex-wrap border-b border-slate-100">
-              <div class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-1.5 py-1.5">
-                <button
-                  type="button"
-                  class="w-6 h-6 rounded-md text-slate-400 hover:text-blue-900 hover:bg-slate-50 flex items-center justify-center transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-900/40 focus-visible:outline-none"
-                  title="เดือนก่อนหน้า"
-                  @click.stop="show('ยังรองรับเดือน ต.ค. 2569 เท่านั้น')"
-                >
-                  <ChevronLeft class="w-4 h-4" />
-                </button>
-                <span class="flex items-center gap-2 px-2 py-1">
-                  <CalendarDays class="w-4 h-4 text-blue-900" />
-                  <span class="text-xs font-bold text-slate-700">ต.ค. 2569</span>
-                </span>
-                <button
-                  type="button"
-                  class="w-6 h-6 rounded-md text-slate-400 hover:text-blue-900 hover:bg-slate-50 flex items-center justify-center transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-900/40 focus-visible:outline-none"
-                  title="เดือนถัดไป"
-                  @click.stop="show('ยังรองรับเดือน ต.ค. 2569 เท่านั้น')"
-                >
-                  <ChevronRight class="w-4 h-4" />
-                </button>
-              </div>
-              <div class="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5">
-                <button
-                  type="button"
-                  class="p-1.5 rounded-md transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-900/40 focus-visible:outline-none"
-                  :class="viewMode === 'calendar' ? 'bg-white shadow-xs text-blue-900' : 'text-slate-400 hover:text-slate-600'"
-                  :aria-pressed="viewMode === 'calendar'"
-                  title="มุมมองแบบปฏิทิน"
-                  @click.stop="viewMode = 'calendar'"
-                >
-                  <CalendarDays class="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  class="p-1.5 rounded-md transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-900/40 focus-visible:outline-none"
-                  :class="viewMode === 'list' ? 'bg-white shadow-xs text-blue-900' : 'text-slate-400 hover:text-slate-600'"
-                  :aria-pressed="viewMode === 'list'"
-                  title="มุมมองแบบรายการ"
-                  @click.stop="viewMode = 'list'"
-                >
-                  <List class="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  class="p-1.5 rounded-md transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-900/40 focus-visible:outline-none"
-                  :class="viewMode === 'stats' ? 'bg-white shadow-xs text-blue-900' : 'text-slate-400 hover:text-slate-600'"
-                  :aria-pressed="viewMode === 'stats'"
-                  title="ตารางสถิติการลา"
-                  @click.stop="viewMode = 'stats'"
-                >
-                  <BarChart3 class="w-4 h-4" />
-                </button>
-              </div>
+            <div class="px-4 sm:px-5 py-3 border-b border-slate-100">
+              <UiToolbar>
+                <template #start>
+                  <!-- ตัวกรอง (มุมมองรายการ) -->
+                  <template v-if="viewMode === 'list'">
+                    <UiSelect v-model="filterYear" :options="yearOptions" size="md" fit select-class="font-bold" />
+                    <UiSelect v-model="filterType" :options="typeOptions" size="md" fit />
+                    <UiSelect v-model="filterStatus" :options="statusOptions" size="md" fit />
+                  </template>
+                  <!-- เลือกปี (มุมมองสถิติ) -->
+                  <UiSelect v-else-if="viewMode === 'stats'" v-model="filterYear" :options="yearOptions" size="md" fit select-class="font-bold" />
+                  <!-- เลือกเดือน (มุมมองปฏิทิน) -->
+                  <div v-else class="inline-flex items-center h-9 gap-1 rounded-lg border border-slate-200 bg-white px-1">
+                    <UiIconButton tone="ghost" title="เดือนก่อนหน้า" @click="show('ยังรองรับเดือน ต.ค. 2569 เท่านั้น')">
+                      <ChevronLeft class="w-4 h-4" />
+                    </UiIconButton>
+                    <span class="flex items-center gap-2 px-2">
+                      <CalendarDays class="w-4 h-4 text-blue-900" />
+                      <span class="text-xs font-bold text-slate-700">ต.ค. 2569</span>
+                    </span>
+                    <UiIconButton tone="ghost" title="เดือนถัดไป" @click="show('ยังรองรับเดือน ต.ค. 2569 เท่านั้น')">
+                      <ChevronRight class="w-4 h-4" />
+                    </UiIconButton>
+                  </div>
+                </template>
+                <template #end>
+                  <UiToggleGroup v-model="viewMode" :items="viewModeItems" size="sm" />
+                </template>
+              </UiToolbar>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12">
+            <div class="grid grid-cols-1" :class="viewMode === 'calendar' ? 'lg:grid-cols-12' : ''">
               <!-- สมาชิกในทีม -->
-              <div class="lg:col-span-3 border-b lg:border-b-0 lg:border-r border-slate-100 p-4">
+              <div v-if="viewMode === 'calendar'" class="lg:col-span-3 border-b lg:border-b-0 lg:border-r border-slate-100 p-4">
                 <p class="text-xs font-bold text-slate-700 px-2">สมาชิกในทีม</p>
                 <ul class="mt-3 space-y-1">
                   <li>
@@ -193,7 +167,7 @@
               </div>
 
               <!-- ปฏิทิน -->
-              <div class="lg:col-span-9 p-4">
+              <div class="p-4" :class="viewMode === 'calendar' ? 'lg:col-span-9' : ''">
                 <!-- มุมมองปฏิทิน -->
                 <div v-if="viewMode === 'calendar'">
                   <div class="grid grid-cols-7">
@@ -230,62 +204,62 @@
                   </div>
                 </div>
 
-                <!-- มุมมองรายการ -->
-                <div v-else-if="viewMode === 'list'" class="py-2">
-                  <p v-if="!myLeaves.length" class="py-12 text-center">
-                    <span class="inline-flex w-14 h-14 rounded-full bg-slate-50 border border-slate-200 items-center justify-center">
-                      <CalendarDays class="w-6 h-6 text-slate-300" />
-                    </span>
-                    <span class="block text-xs text-slate-400 mt-3">ไม่พบรายการลาของท่านในเดือน ต.ค. 2569</span>
-                  </p>
-                  <ul v-else class="divide-y divide-slate-50">
-                    <li v-for="leave in myLeaves" :key="leave.id" class="py-3 flex items-center gap-3">
-                      <span class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" :class="typeTone[leave.type]">
-                        <CalendarDays class="w-4 h-4" />
-                      </span>
-                      <div class="min-w-0 flex-1">
-                        <p class="text-xs font-bold text-slate-800">{{ typeLabel[leave.type] }}</p>
-                        <p class="text-[11px] text-slate-400 mt-0.5">{{ leave.date }} · {{ leave.days }} วัน</p>
-                      </div>
+                <!-- มุมมองรายการ: ตารางใบลา -->
+                <div v-else-if="viewMode === 'list'">
+                  <!-- ตารางแสดงรายการใบลา -->
+                  <AppTable
+                    :columns="listColumns"
+                    :data="filteredLeaves"
+                    row-key="id"
+                  >
+                    <template #cell-no="{ value }">
+                      <span class="tabular-nums text-slate-400">{{ value }}</span>
+                    </template>
+                    <template #cell-type="{ row }">
+                      <span class="font-semibold text-slate-800">{{ row.type }}</span>
+                    </template>
+                    <template #cell-status="{ value }">
                       <span
-                        class="shrink-0 px-2.5 py-1 rounded-full text-[10px] font-semibold"
-                        :class="statusTone(leave.status)"
-                      >{{ leave.status }}</span>
-                    </li>
-                  </ul>
+                        class="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold"
+                        :class="statusTone(value)"
+                      >{{ value }}</span>
+                    </template>
+                    <template #cell-actions>
+                      <UiDropdownButton
+                        icon-only
+                        menu-title="จัดการใบลา"
+                        :items="leaveActionItems"
+                        @select="show(`${$event.label} ยังไม่เปิดใช้งาน`)"
+                      />
+                    </template>
+                  </AppTable>
                 </div>
 
                 <!-- มุมมองตารางสถิติการลา -->
-                <div v-else-if="viewMode === 'stats'" class="py-1">
-                  <div class="overflow-x-auto">
-                    <table class="w-full text-left border-separate border-spacing-0">
-                      <thead>
-                        <tr class="bg-slate-50">
-                          <th class="px-3 py-2.5 text-[11px] font-semibold text-slate-500 border-b border-slate-200 text-center w-14">ลำดับ</th>
-                          <th class="px-3 py-2.5 text-[11px] font-semibold text-slate-500 border-b border-slate-200">ประเภทการลา</th>
-                          <th class="px-3 py-2.5 text-[11px] font-semibold text-slate-500 border-b border-slate-200 text-center">โควต้าวันลา</th>
-                          <th class="px-3 py-2.5 text-[11px] font-semibold text-slate-500 border-b border-slate-200 text-center">วันลาสะสม</th>
-                          <th class="px-3 py-2.5 text-[11px] font-semibold text-slate-500 border-b border-slate-200 text-right">จำนวนยื่นบอก (วัน)</th>
-                          <th class="px-3 py-2.5 text-[11px] font-semibold text-slate-500 border-b border-slate-200 text-right">จำนวนที่อนุมัติ (วัน)</th>
-                          <th class="px-3 py-2.5 text-[11px] font-semibold text-slate-500 border-b border-slate-200 text-right">จำนวนที่ไม่อนุมัติ (วัน)</th>
-                          <th class="px-3 py-2.5 text-[11px] font-semibold text-slate-500 border-b border-slate-200 text-right">จำนวนที่กำลังเลย (วัน)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(row, i) in statsTable" :key="row.label" class="hover:bg-blue-50/30 transition-colors">
-                          <td class="px-3 py-2.5 border-b border-slate-100 text-center text-xs tabular-nums text-slate-400">{{ i + 1 }}</td>
-                          <td class="px-3 py-2.5 border-b border-slate-100 text-xs text-slate-700">{{ row.label }}</td>
-                          <td class="px-3 py-2.5 border-b border-slate-100 text-center text-xs tabular-nums" :class="row.quota === null ? 'text-slate-300' : 'text-slate-700'">{{ row.quota ?? '-' }}</td>
-                          <td class="px-3 py-2.5 border-b border-slate-100 text-center text-xs tabular-nums" :class="row.carried === null ? 'text-slate-300' : 'text-slate-700'">{{ row.carried ?? '-' }}</td>
-                          <td class="px-3 py-2.5 border-b border-slate-100 text-right text-xs tabular-nums text-slate-700">{{ row.submitted }}</td>
-                          <td class="px-3 py-2.5 border-b border-slate-100 text-right text-xs tabular-nums text-emerald-600">{{ row.approved }}</td>
-                          <td class="px-3 py-2.5 border-b border-slate-100 text-right text-xs tabular-nums text-red-500">{{ row.rejected }}</td>
-                          <td class="px-3 py-2.5 border-b border-slate-100 text-right text-xs tabular-nums text-amber-600">{{ row.pending }}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <p class="px-3 py-2 text-[10px] text-slate-400">สถิติประจำปีงบประมาณ 2569</p>
+                <div v-else-if="viewMode === 'stats'">
+                  <AppTable
+                    :columns="statsColumns"
+                    :data="statsTable"
+                    row-key="id"
+                    :row-class="'bg-white hover:bg-blue-50/30'"
+                  >
+                    <template #cell-quota="{ row }">
+                      <span class="tabular-nums" :class="row.quota === null ? 'text-slate-300' : 'text-slate-700'">{{ row.quota ?? '-' }}</span>
+                    </template>
+                    <template #cell-carried="{ row }">
+                      <span class="tabular-nums" :class="row.carried === null ? 'text-slate-300' : 'text-slate-700'">{{ row.carried ?? '-' }}</span>
+                    </template>
+                    <template #cell-approved="{ value }">
+                      <span class="tabular-nums font-semibold text-emerald-600">{{ value }}</span>
+                    </template>
+                    <template #cell-rejected="{ value }">
+                      <span class="tabular-nums font-semibold text-red-500">{{ value }}</span>
+                    </template>
+                    <template #cell-pending="{ value }">
+                      <span class="tabular-nums font-semibold text-amber-600">{{ value }}</span>
+                    </template>
+                  </AppTable>
+                  <p class="px-1 py-2 text-[10px] text-slate-400">สถิติประจำปีงบประมาณ {{ filterYear }}</p>
                 </div>
               </div>
             </div>
@@ -304,18 +278,53 @@ import {
   ChevronLeft,
   ChevronRight,
   List,
+  Pencil,
   Plus,
   Thermometer,
+  Trash2,
   UserRound,
-  Users,
 } from 'lucide-vue-next';
-import { UiButton, UiCard } from '../components/ui';
+import { UiButton, UiCard, UiIconButton, UiSelect, UiToggleGroup, UiDropdownButton, AppTable, UiToolbar } from '../components/ui';
 import { useToast } from '../composables/useToast';
+import { useRouter } from 'vue-router';
 
 const { show } = useToast();
+const router = useRouter();
 
 const viewMode = ref<'calendar' | 'list' | 'stats'>('calendar');
 const selectedMembers = ref<string[]>([]);
+
+const viewModeItems = [
+  { value: 'calendar', title: 'มุมมองแบบปฏิทิน', icon: CalendarDays },
+  { value: 'list', title: 'มุมมองแบบรายการ', icon: List },
+  { value: 'stats', title: 'ตารางสถิติการลา', icon: BarChart3 },
+];
+
+const yearOptions = [
+  { value: '2570', label: 'ปีงบประมาณ 2570' },
+  { value: '2569', label: 'ปีงบประมาณ 2569' },
+];
+
+// --- ตัวกรองมุมมองรายการ
+const filterYear = ref('2570');
+const filterType = ref('all');
+const filterStatus = ref('all');
+
+const listColumns = [
+  { key: 'no', label: 'ลำดับ', align: 'center' as const, width: '64px' },
+  { key: 'type', label: 'ประเภทการลา' },
+  { key: 'range', label: 'วันที่ลา' },
+  { key: 'days', label: 'จำนวนวัน', align: 'center' as const },
+  { key: 'submitted', label: 'วันที่ยื่นใบลา', align: 'center' as const },
+  { key: 'status', label: 'สถานะ', align: 'center' as const },
+  { key: 'actions', label: 'จัดการ', align: 'center' as const, width: '72px' },
+];
+
+const leaveActionItems = [
+  { value: 'view', label: 'ดูรายละเอียด', icon: List },
+  { value: 'edit', label: 'แก้ไข', icon: Pencil },
+  { value: 'delete', label: 'ลบ', icon: Trash2 },
+];
 
 const toggleMember = (name: string) => {
   selectedMembers.value = selectedMembers.value.includes(name)
@@ -351,11 +360,6 @@ const typeLabel: Record<LeaveType, string> = {
   sick: 'ลาป่วย',
   personal: 'ลากิจส่วนตัว',
 };
-const typeTone: Record<LeaveType, string> = {
-  vacation: 'bg-emerald-50 text-emerald-600',
-  sick: 'bg-sky-50 text-sky-600',
-  personal: 'bg-amber-50 text-amber-600',
-};
 const typeDot: Record<LeaveType, string> = {
   vacation: 'bg-emerald-400',
   sick: 'bg-sky-400',
@@ -364,9 +368,41 @@ const typeDot: Record<LeaveType, string> = {
 const statusTone = (status: string) =>
   status === 'อนุมัติ' ? 'bg-emerald-50 text-emerald-700'
     : status === 'ไม่อนุมัติ' ? 'bg-red-50 text-red-600'
+    : status === 'แบบร่าง' ? 'bg-slate-100 text-slate-500'
     : 'bg-amber-50 text-amber-600';
 
-const myLeaves: { id: string; type: LeaveType; date: string; days: number; status: string }[] = [];
+const leaveStatuses = ['แบบร่าง', 'รออนุมัติ', 'อนุมัติ', 'ไม่อนุมัติ'];
+
+const typeOptions = [
+  { value: 'all', label: 'ประเภทใบลา: ทั้งหมด' },
+  ...(Object.entries(typeLabel) as [LeaveType, string][]).map(([value, label]) => ({ value, label })),
+];
+
+const statusOptions = [
+  { value: 'all', label: 'สถานะ: ทั้งหมด' },
+  ...leaveStatuses.map((s) => ({ value: s, label: s })),
+];
+
+interface LeaveRequest {
+  id: number;
+  type: string;
+  range: string;
+  days: number;
+  submitted: string;
+  status: string;
+}
+
+const leaveRequests: LeaveRequest[] = [
+  { id: 1, type: 'ลากิจส่วนตัว', range: '21 ต.ค. 2569 - 24 ต.ค. 2569', days: 4, submitted: '-', status: 'แบบร่าง' },
+  { id: 2, type: 'ลาป่วย', range: '13 ต.ค. 2569 - 14 ต.ค. 2569', days: 2, submitted: '-', status: 'แบบร่าง' },
+];
+
+const filteredLeaves = computed(() =>
+  leaveRequests.filter((l) =>
+    (filterType.value === 'all' || l.type === typeLabel[filterType.value as LeaveType]) &&
+    (filterStatus.value === 'all' || l.status === filterStatus.value),
+  ),
+);
 
 const teamLeaves: { name: string; initial: string; type: LeaveType; until: string }[] = [
   { name: 'นายกิตติ ว่องไว', initial: 'ก', type: 'sick', until: 'ถึง 7 ต.ค.' },
@@ -463,6 +499,17 @@ const visibleOthersLeaves = computed(() =>
 );
 
 // --- ตารางสถิติการลา (ประจำปี)
+const statsColumns = [
+  { key: 'no', label: 'ลำดับ', align: 'center' as const, width: '64px' },
+  { key: 'label', label: 'ประเภทการลา' },
+  { key: 'quota', label: 'โควต้าวันลา', align: 'center' as const },
+  { key: 'carried', label: 'วันลาสะสม', align: 'center' as const },
+  { key: 'submitted', label: 'จำนวนยื่นบอก (วัน)', align: 'right' as const },
+  { key: 'approved', label: 'จำนวนที่อนุมัติ (วัน)', align: 'right' as const },
+  { key: 'rejected', label: 'จำนวนที่ไม่อนุมัติ (วัน)', align: 'right' as const },
+  { key: 'pending', label: 'จำนวนที่กำลังเลย (วัน)', align: 'right' as const },
+];
+
 interface StatsRow {
   label: string;
   quota: number | null;
@@ -473,7 +520,7 @@ interface StatsRow {
   pending: number;
 }
 
-const statsTable: StatsRow[] = [
+const statsRows: StatsRow[] = [
   { label: 'ลาเพื่อเตรียมความพร้อมหรือพักฟื้นความพร้อมในการทำงาน', quota: null, carried: null, submitted: 0, approved: 0, rejected: 0, pending: 0 },
   { label: 'ลาพักผ่อน', quota: vacationEntitlement, carried: 0, submitted: 0, approved: 0, rejected: 0, pending: 0 },
   { label: 'ลากิจส่วนตัว', quota: null, carried: null, submitted: 0, approved: 0, rejected: 0, pending: 0 },
@@ -486,4 +533,6 @@ const statsTable: StatsRow[] = [
   { label: 'ลาคลอดบุตร', quota: null, carried: null, submitted: 0, approved: 0, rejected: 0, pending: 0 },
   { label: 'ลาเพื่อฟื้นฟูสมรรถภาพด้านการปฏิบัติงาน', quota: null, carried: null, submitted: 0, approved: 0, rejected: 0, pending: 0 },
 ];
+
+const statsTable = statsRows.map((row, i) => ({ id: i + 1, no: i + 1, ...row }));
 </script>

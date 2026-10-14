@@ -27,8 +27,10 @@
        
         <button
           type="button"
-          class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-slate-500 hover:text-blue-900 hover:bg-blue-50 transition-colors cursor-pointer"
-          @click.stop="show('การลา')"
+          class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-colors duration-150 cursor-pointer"
+          :class="active === 'leave' ? 'bg-blue-900 text-white shadow-sm' : 'text-slate-500 hover:text-blue-900 hover:bg-blue-50'"
+          :aria-current="active === 'leave' ? 'page' : undefined"
+          @click.stop="router.push('/user/leave')"
         >
           <CalendarDays class="w-4 h-4" />
           การลา
@@ -85,7 +87,7 @@
                 </span>
                 <span
                   class="text-[11px] text-blue-700 hover:underline cursor-pointer"
-                  @click.stop="isNotifOpen = false; show('เปิดกล่องข้อความทั้งหมดยังไม่พร้อมใช้งาน')"
+                  @click.stop="isNotifOpen = false; router.push('/user/notifications')"
                 >
                   ดูทั้งหมด
                 </span>
@@ -198,7 +200,7 @@ import { useAuth, displayName } from '../../composables/useAuth';
 import { useInbox } from '../../composables/useInbox';
 import { useToast } from '../../composables/useToast';
 
-withDefaults(defineProps<{ active?: 'home' | 'records' | null }>(), { active: 'home' });
+withDefaults(defineProps<{ active?: 'home' | 'records' | 'leave' | null }>(), { active: 'home' });
 
 const router = useRouter();
 const { signOut } = useAuth();

@@ -13,7 +13,7 @@
             class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-100 text-sky-800 text-xs font-bold
                    hover:bg-sky-200 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer
                    focus:outline-none focus:ring-2 focus:ring-sky-300"
-            @click.stop="show('การตรวจสอบข้อมูลตำแหน่งและเงินเดือนยังไม่เปิดใช้งาน')"
+            @click.stop="router.push({ name: 'user-position-salary-history' })"
           >
             <SearchCheck class="w-4 h-4" />
             ตรวจสอบข้อมูลตำแหน่งและเงินเดือน
@@ -23,7 +23,7 @@
             class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-900 text-white text-xs font-bold
                    shadow-md shadow-blue-900/25 hover:bg-blue-800 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer
                    focus:outline-none focus:ring-2 focus:ring-blue-900/30"
-            @click.stop="show('แบบฟอร์มยื่นคำร้องขอแก้ไขยังไม่เปิดใช้งาน')"
+            @click.stop="router.push({ name: 'user-modification-requests' })"
           >
             <PenLine class="w-4 h-4" />
             ยื่นคำร้องขอแก้ไขข้อมูล
@@ -274,8 +274,10 @@ import {
 } from 'lucide-vue-next';
 import { useToast } from '../composables/useToast';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const { show } = useToast();
+const router = useRouter();
 
 const tabs = [
   { id: 'personal', label: 'ข้อมูลส่วนตัว', icon: UserRound },

@@ -74,6 +74,36 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../views/UserLeaveView.vue'),
         meta: { title: 'การลา' },
       },
+      {
+        path: 'leave/new',
+        name: 'user-leave-new',
+        component: () => import('../views/UserLeaveFormView.vue'),
+        meta: { title: 'แบบฟอร์มสร้างใบลา' },
+      },
+      {
+        path: 'modification-requests',
+        name: 'user-modification-requests',
+        component: () => import('../views/UserModificationRequestsView.vue'),
+        meta: { title: 'รายการยื่นคำร้องขอแก้ไขข้อมูล' },
+      },
+      {
+        path: 'position-salary-history',
+        name: 'user-position-salary-history',
+        component: () => import('../views/UserPositionSalaryHistoryView.vue'),
+        meta: { title: 'รายการประวัติตำแหน่ง/เงินเดือน' },
+      },
+      {
+        path: 'evaluation',
+        name: 'user-evaluation',
+        component: () => import('../views/UserEvaluationView.vue'),
+        meta: { title: 'ระบบประเมินบุคคล' },
+      },
+      {
+        path: 'notifications',
+        name: 'user-notifications',
+        component: () => import('../views/UserNotificationsView.vue'),
+        meta: { title: 'การแจ้งเตือน' },
+      },
     ],
   },
 

@@ -1,6 +1,6 @@
 <template>
   <div class="h-screen flex flex-col bg-slate-50 text-slate-800 antialiased overflow-hidden">
-    <UserTopBar :active="route.name === 'user-home' ? 'home' : route.name === 'user-records' ? 'records' : null" />
+    <UserTopBar :active="route.name === 'user-home' ? 'home' : route.name === 'user-records' ? 'records' : route.name?.toString().startsWith('user-leave') ? 'leave' : null" />
     <main class="flex-1 overflow-y-auto nice-scroll">
       <router-view />
     </main>

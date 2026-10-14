@@ -112,7 +112,7 @@
               :key="stat.label"
               type="button"
               class="w-full text-left px-4 py-3 flex items-center gap-3 transition-colors cursor-pointer group/stat hover:bg-slate-50"
-              @click.stop="show(`สถิติ ${stat.label} ยังไม่เปิดใช้งาน`)"
+              @click.stop="stat.route ? router.push(stat.route) : show(`สถิติ ${stat.label} ยังไม่เปิดใช้งาน`)"
             >
               <span
                 class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-200"
@@ -228,7 +228,7 @@ const todayText = computed(() => {
 const menuItems: { icon: typeof IdCard; title: string; desc: string; footer: string; route?: string }[] = [
   { icon: Users, title: 'แผนที่องค์กร', desc: 'ดูแผนที่องค์กร, ดาวน์โหลดไฟล์', footer: 'ระบบแผนผังองค์กร กทม.', route: '/user/org-map' },
   { icon: IdCard, title: 'ทะเบียนประวัติ', desc: 'ดูข้อมูล, ยื่นคำร้องขอแก้ไขข้อมูล', footer: 'ก.พ.7 อิเล็กทรอนิกส์', route: '/user/records' },
-  { icon: ClipboardCheck, title: 'ประเมินบุคคล', desc: 'ตรวจสอบข้อมูลการประเมินบุคคล', footer: 'ระบบประเมิน ก.พ.' },
+  { icon: ClipboardCheck, title: 'ประเมินบุคคล', desc: 'ตรวจสอบข้อมูลการประเมินบุคคล', footer: 'ระบบประเมิน ก.พ.', route: '/user/evaluation' },
   { icon: CalendarDays, title: 'การลา', desc: 'ดู/แก้ไขวันลา, ทำเรื่องลา', footer: 'ระบบลาอิเล็กทรอนิกส์', route: '/user/leave' },
   { icon: FolderOpen, title: 'ผลงาน', desc: 'ดู/เพิ่มผลงาน, แนบไฟล์ประกอบ', footer: 'ฐานข้อมูลผลงาน กทม.' },
   { icon: UserCheck, title: 'ขอโอน', desc: 'ประวัติขอโอน, ยื่นคำร้องขอโอน', footer: 'ระบบสายงาน ก.พ.' },
@@ -240,11 +240,11 @@ const menuItems: { icon: typeof IdCard; title: string; desc: string; footer: str
 ];
 
 // --- สรุปสถิติส่วนตัว
-const personalStats: { icon: typeof IdCard; label: string; sub: string; value: string; tone: string; valueTone: string }[] = [
-  { icon: CalendarDays, label: 'วันลาคงเหลือ', sub: 'ลาไปแล้ว 6 วันในปีนี้', value: '14 วัน', tone: 'bg-blue-50/60 text-blue-900', valueTone: 'text-blue-900' },
+const personalStats: { icon: typeof IdCard; label: string; sub: string; value: string; tone: string; valueTone: string; route?: string }[] = [
+  { icon: CalendarDays, label: 'วันลาคงเหลือ', sub: 'ลาไปแล้ว 6 วันในปีนี้', value: '14 วัน', tone: 'bg-blue-50/60 text-blue-900', valueTone: 'text-blue-900', route: '/user/leave' },
   { icon: Target, label: 'ผลประเมิน KPI ล่าสุด', sub: 'รอบ 1/2569 · อนุมัติแล้ว', value: '92%', tone: 'bg-emerald-50/60 text-emerald-600', valueTone: 'text-emerald-600' },
   { icon: FolderOpen, label: 'ผลงานที่บันทึก', sub: 'อัปเดตล่าสุด 28 ก.ย. 69', value: '5', tone: 'bg-violet-50/60 text-violet-600', valueTone: 'text-violet-600' },
-  { icon: IdCard, label: 'คำร้องทะเบียนประวัติ', sub: 'รอตรวจสอบ 1 เรื่อง', value: '2', tone: 'bg-amber-50/60 text-amber-600', valueTone: 'text-amber-600' },
+  { icon: IdCard, label: 'คำร้องทะเบียนประวัติ', sub: 'รอตรวจสอบ 1 เรื่อง', value: '2', tone: 'bg-amber-50/60 text-amber-600', valueTone: 'text-amber-600', route: '/user/modification-requests' },
   { icon: GraduationCap, label: 'อบรม/ทุนที่ผ่านมา', sub: 'ปีงบประมาณ 2569', value: '3', tone: 'bg-pink-50/60 text-pink-600', valueTone: 'text-pink-600' },
 ];
 
