@@ -200,14 +200,14 @@
       data-purpose="personnel-detail-unified-card"
     >
       <!-- BEGIN: Left Vertical Navigation Menu (Inside unified card) -->
-      <div data-purpose="personnel-detail-sidebar" class="w-full">
-        <UiSideNav v-model="activeMainSection" :items="mainSections" />
+      <div data-purpose="personnel-detail-sidebar">
+        <UiSideNav v-model="activeMainSection" :items="mainSections" class="h-full" />
       </div>
       <!-- END: Left Vertical Navigation Menu -->
 
       <!-- BEGIN: Right Detail Content Container (Inside unified card) -->
       <div
-        class="flex-1 min-w-0 bg-white flex flex-col"
+        class="w-full bg-white flex flex-col"
         data-purpose="personnel-detail-content"
       >
         <!-- Header of Right Section -->
