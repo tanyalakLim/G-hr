@@ -78,17 +78,7 @@
           <div class="absolute inset-0 bg-gradient-to-r from-bma-900/92 via-bma-800/72 to-bma-900/30" aria-hidden="true"></div>
 
           <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
-            <!-- สโลแกน -->
-           <!--  <div class="flex flex-wrap items-center gap-2">
-              <span
-                v-for="word in SLOGAN"
-                :key="word"
-                class="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 backdrop-blur px-3.5 py-1.5 text-xs sm:text-sm font-medium"
-              >
-                <ShieldCheck class="w-3.5 h-3.5 text-emerald-300" />
-                {{ word }}
-              </span>
-            </div> -->
+         
 
             <h1 class="mt-6 text-2xl sm:text-4xl lg:text-5xl font-bold leading-snug max-w-3xl drop-shadow-sm">
               ระบบสรรหาและสอบคัดเลือก
@@ -105,14 +95,12 @@
                 to="/recruitment_site/select"
                 class="inline-flex items-center gap-2 rounded-xl bg-white text-bma-800 text-sm font-semibold px-5 py-3 shadow-lg shadow-bma-900/30 hover:bg-blue-50 transition-colors"
               >
-                <Users class="w-4.5 h-4.5" />
                 การคัดเลือก
               </RouterLink>
               <RouterLink
                 to="/recruitment_site/exam"
                 class="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-white/10 backdrop-blur text-white text-sm font-semibold px-5 py-3 hover:bg-white/20 transition-colors"
               >
-                <PenLine class="w-4.5 h-4.5" />
                 การสอบแข่งขัน
               </RouterLink>
             </div>
