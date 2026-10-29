@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" role="img" aria-label="รูปประกอบประกาศการคัดเลือก — ตรวจสอบคุณสมบัติ">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#021235"/>
+      <stop offset="0.45" stop-color="#072458"/>
+      <stop offset="1" stop-color="#1848c0"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.75" cy="0.2" r="0.75">
+      <stop offset="0" stop-color="#5b8cff" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#5b8cff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="wave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#5b8cff" stop-opacity="0.10"/>
+    </linearGradient>
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1.5" fill="#ffffff" opacity="0.13"/>
+    </pattern>
+  </defs>
+
+  <!-- พื้นหลังไล่สีน้ำเงิน (ชุดเดียวกับแบนเนอร์หลัก) -->
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <rect width="800" height="450" fill="url(#glow)"/>
+  <rect width="800" height="450" fill="url(#dots)"/>
+
+  <!-- วงกลมตกแต่ง -->
+  <circle cx="700" cy="70" r="140" fill="#ffffff" opacity="0.06"/>
+  <circle cx="745" cy="200" r="70" fill="#5b8cff" opacity="0.18"/>
+  <circle cx="70" cy="370" r="100" fill="#5b8cff" opacity="0.15"/>
+  <circle cx="620" cy="340" r="9" fill="#7ea4ff" opacity="0.5"/>
+  <circle cx="170" cy="80" r="18" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3"/>
+
+  <!-- สัญลักษณ์ตรวจสอบคุณสมบัติ: คลิปบอร์ดรายการตรวจ -->
+  <g>
+    <rect x="320" y="100" width="180" height="240" rx="16" fill="#ffffff" opacity="0.92"/>
+    <rect x="380" y="84" width="60" height="32" rx="10" fill="#062058" opacity="0.35"/>
+    <rect x="350" y="148" width="22" height="22" rx="6" fill="#062058" opacity="0.35"/>
+    <polyline points="353,159 359,165 371,151" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="386" y="154" width="80" height="10" rx="5" fill="#062058" opacity="0.20"/>
+    <rect x="350" y="198" width="22" height="22" rx="6" fill="#062058" opacity="0.35"/>
+    <polyline points="353,209 359,215 371,201" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="386" y="204" width="64" height="10" rx="5" fill="#062058" opacity="0.20"/>
+    <rect x="350" y="248" width="22" height="22" rx="6" fill="#062058" opacity="0.18"/>
+    <rect x="386" y="254" width="72" height="10" rx="5" fill="#062058" opacity="0.14"/>
+    <rect x="350" y="292" width="22" height="22" rx="6" fill="#062058" opacity="0.18"/>
+    <rect x="386" y="298" width="52" height="10" rx="5" fill="#062058" opacity="0.14"/>
+  </g>
+
+  <!-- คลื่นด้านล่าง -->
+  <path d="M0 330 C 140 290 260 390 420 362 C 560 338 680 280 800 320 L800 450 L0 450 Z" fill="url(#wave)"/>
+  <path d="M0 392 C 180 350 360 430 540 404 C 660 388 740 360 800 380 L800 450 L0 450 Z" fill="#ffffff" opacity="0.10"/>
+</svg>

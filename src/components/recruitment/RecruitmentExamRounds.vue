@@ -88,8 +88,8 @@
               <th v-if="showCol('no')" class="py-3 px-4 min-w-[70px] text-center">ลำดับ</th>
               <th v-if="showCol('name')" class="py-3 px-4 min-w-[280px]">รอบสอบแข่งขัน</th>
               <th v-if="showCol('times')" class="py-3 px-4 min-w-[90px]">ครั้งที่</th>
-              <th v-if="showCol('fiscalYear')" class="py-3 px-4 min-w-[110px]">ปีงบประมาณ</th>
-              <th v-if="showCol('applicants')" class="py-3 px-4 min-w-[200px]">ข้อมูลผู้สมัครสอบ</th>
+              <th v-if="showCol('fiscalYear')" class="py-3 px-4 min-w-[110px] text-right">ปีงบประมาณ</th>
+              <th v-if="showCol('applicants')" class="py-3 px-4 min-w-[200px] text-center">ข้อมูลผู้สมัครสอบ</th>
               <th v-if="showCol('score')" class="py-3 px-4 min-w-[190px]">บัญชีรวมคะแนน</th>
               <th v-if="showCol('result')" class="py-3 px-4 min-w-[190px]">ผลการสอบ</th>
             </tr>
@@ -120,9 +120,9 @@
               </td>
               <td v-if="showCol('name')" class="py-3.5 px-4 font-semibold text-blue-950">{{ item.name }}</td>
               <td v-if="showCol('times')" class="py-3.5 px-4 tabular-nums">ครั้งที่ {{ item.times }}</td>
-              <td v-if="showCol('fiscalYear')" class="py-3.5 px-4 tabular-nums text-slate-600">{{ item.fiscalYear }}</td>
+              <td v-if="showCol('fiscalYear')" class="py-3.5 px-4 tabular-nums text-slate-600 text-right">{{ item.fiscalYear }}</td>
               <td v-if="showCol('applicants')" class="py-3.5 px-4">
-                <div class="flex items-center gap-1.5">
+                <div class="flex items-center gap-1.5 justify-end">
                   <UiBadge tone="blue" shape="chip" mono>{{ item.applicants }} คน</UiBadge>
                   <UiIconButton tone="ghost" title="ส่งออกข้อมูลผู้สมัครสอบ (Excel)" @click="exportApplicants(item)">
                     <FileSpreadsheet class="w-4 h-4 text-emerald-600" />
@@ -322,7 +322,7 @@ const rounds = ref<ExamRound[]>([
     name: 'การสอบแข่งขันเพื่อบรรจุและแต่งตั้งบุคคลเข้ารับราชการตำแหน่งนักประเมินราคา',
     times: 1,
     fiscalYear: '2569',
-    applicants: 128,
+    applicants: 18,
     scoreAccounts: 3,
     scoreStatus: 'done',
     resultCount: 2,
@@ -391,7 +391,7 @@ const handleRowMenu = (action: string, item: ExamRound) => {
     return;
   }
   if (action === 'detail') {
-    show(`เปิดดูรายละเอียด "${item.name.slice(0, 40)}..." (ยังไม่เปิดใช้งาน)`);
+    router.push(`/recruitment/recruitment_exam_round/${item.id}`);
     return;
   }
   show(`ประวัติการนำเข้าข้อมูลของ "${item.name.slice(0, 40)}..." (ยังไม่เปิดใช้งาน)`);

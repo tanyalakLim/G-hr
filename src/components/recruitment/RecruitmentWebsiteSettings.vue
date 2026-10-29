@@ -1,10 +1,21 @@
 <template>
   <div class="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-4">
-    <div class="pb-1">
+    <div class="pb-1 flex items-end justify-between gap-3 flex-wrap">
       <PageTitle
         title="ตั้งค่าเว็บสรรหา"
         subtitle="จัดการและแก้ไขข้อมูลทั่วไปที่แสดงบนเว็บไซต์ระบบสรรหาบุคลากร"
       />
+      <!-- เปิดดูเว็บไซต์สรรหา (public) ในแท็บใหม่ -->
+      <a
+        href="/recruitment_site"
+        target="_blank"
+        rel="noopener"
+        class="inline-flex items-center gap-2 rounded-xl border border-bma-200 bg-bma-50 hover:bg-bma-100 text-bma-700 text-xs font-semibold px-4 py-2.5 transition-colors shrink-0"
+        title="เปิดดูเว็บไซต์ระบบสรรหาในแท็บใหม่"
+      >
+        <ExternalLink class="w-4 h-4" />
+        เปิดดูเว็บไซต์
+      </a>
     </div>
 
     <!-- 1. ส่วนรูปภาพ (โลโก้และแบนเนอร์) -->
@@ -53,6 +64,9 @@
             <CheckCircle2 class="w-3.5 h-3.5 shrink-0" />
             <span class="truncate">{{ logoFiles[0].name }} ({{ formatSize(logoFiles[0].size) }}) — พร้อมบันทึก</span>
           </p>
+          <p v-else-if="siteLogo" class="text-[11px] text-slate-400">
+            แสดงรูปที่บันทึกไว้แล้ว — เลือกไฟล์ใหม่เพื่อเปลี่ยน
+          </p>
           <p v-else class="text-[11px] text-slate-400">คลิกเพื่อเลือกรูป หรือลากไฟล์มาวางบนพื้นที่นี้</p>
         </div>
 
@@ -99,10 +113,17 @@
             <CheckCircle2 class="w-3.5 h-3.5 shrink-0" />
             <span class="truncate">{{ bannerFiles[0].name }} ({{ formatSize(bannerFiles[0].size) }}) — พร้อมบันทึก</span>
           </p>
+          <p v-else-if="siteBanner" class="text-[11px] text-slate-400">
+            แสดงรูปที่บันทึกไว้แล้ว — เลือกไฟล์ใหม่เพื่อเปลี่ยน
+          </p>
           <p v-else class="text-[11px] text-slate-400">คลิกเพื่อเลือกรูป หรือลากไฟล์มาวางบนพื้นที่นี้</p>
         </div>
       </div>
-      <div class="px-4 sm:px-6 py-3.5 border-t border-slate-100 bg-slate-50/60 flex justify-end">
+      <div class="px-4 sm:px-6 py-3.5 border-t border-slate-100 bg-slate-50/60 flex justify-end gap-2">
+        <UiButton variant="outline" :disabled="!hasSavedImages" :title="hasSavedImages ? '' : 'ยังไม่มีรูปที่บันทึกไว้'" @click="resetSavedImages">
+          <template #icon><RotateCcw class="w-4 h-4" /></template>
+          ใช้ค่าเริ่มต้น
+        </UiButton>
         <UiButton :disabled="!hasNewImages" :title="hasNewImages ? '' : 'ยังไม่ได้เลือกรูปภาพใหม่'" @click="saveImages">
           <template #icon><Save class="w-4 h-4" /></template>
           บันทึกรูปภาพ
@@ -363,18 +384,22 @@ import {
   Building2,
   Camera,
   CheckCircle2,
+  ExternalLink,
   Globe,
   Image as ImageIcon,
   Info,
   Pencil,
   Plus,
+  RotateCcw,
   Save,
 } from 'lucide-vue-next';
 import { PageTitle } from '../common';
 import { AppTable, UiBadge, UiButton, UiIconButton, UiInput, UiModal, UiSelect, UiTextEditor } from '../ui';
 import { useToast } from '../../composables/useToast';
+import { useRecruitmentSite } from '../../composables/useRecruitmentSite';
 
 const { show } = useToast();
+const { siteLogo, siteBanner, setImages, resetImages } = useRecruitmentSite();
 
 // --- SectionHeader: หัวข้อมาตรฐานของแต่ละส่วน (icon + title + subtitle)
 const ICONS: Record<string, Component> = { image: ImageIcon, info: Info, building: Building2 };
@@ -418,9 +443,17 @@ const dragOverLogo = ref(false);
 const dragOverBanner = ref(false);
 
 const toPreview = (files: File[]) => (files.length ? URL.createObjectURL(files[0]) : '');
-const logoPreview = computed(() => toPreview(logoFiles.value));
-const bannerPreview = computed(() => toPreview(bannerFiles.value));
+// พรีวิว: ถ้ายังไม่ได้เลือกไฟล์ใหม่ แสดงรูปปัจจุบันที่บันทึกไว้ (หรือว่าง = ค่าเริ่มต้น)
+const logoPreview = computed(() => (logoFiles.value.length ? toPreview(logoFiles.value) : siteLogo.value));
+const bannerPreview = computed(() => (bannerFiles.value.length ? toPreview(bannerFiles.value) : siteBanner.value));
 const hasNewImages = computed(() => logoFiles.value.length > 0 || bannerFiles.value.length > 0);
+const hasSavedImages = computed(() => Boolean(siteLogo.value || siteBanner.value));
+
+/** คืนค่ารูปทั้งหมดเป็นค่าเริ่มต้น (ลบรูปที่บันทึกไว้) */
+const resetSavedImages = () => {
+  resetImages();
+  show('รีเซ็ตรูปภาพเป็นค่าเริ่มต้นแล้ว');
+};
 
 const formatSize = (bytes: number) => {
   if (bytes < 1024) return `${bytes} B`;
@@ -455,9 +488,16 @@ const onDropImage = (event: DragEvent, target: 'logo' | 'banner') => {
   acceptImage(Array.from(event.dataTransfer?.files ?? []), target);
 };
 
-const saveImages = () => {
+const saveImages = async () => {
   const parts = [logoFiles.value.length ? 'โลโก้' : '', bannerFiles.value.length ? 'แบนเนอร์' : ''].filter(Boolean);
-  show(`บันทึก${parts.join('และ')}เรียบร้อยแล้ว`);
+  // บันทึกลง store กลางของเว็บไซต์สรรหา ให้หน้า /recruitment_site แสดงผลรูปที่อัปโหลด
+  try {
+    await setImages(logoFiles.value[0] ?? null, bannerFiles.value[0] ?? null);
+    show(`บันทึก${parts.join('และ')}เรียบร้อยแล้ว`);
+  } catch {
+    show('เกิดข้อผิดพลาดในการอ่านไฟล์รูป กรุณาลองใหม่อีกครั้ง');
+    return;
+  }
   logoFiles.value = [];
   bannerFiles.value = [];
 };

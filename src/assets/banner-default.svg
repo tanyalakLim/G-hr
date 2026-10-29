@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 640" preserveAspectRatio="xMidYMid slice" role="img" aria-label="แบนเนอร์ตัวอย่างเริ่มต้นของระบบสรรหาบุคลากร">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#021235"/>
+      <stop offset="0.45" stop-color="#062058"/>
+      <stop offset="1" stop-color="#153fb5"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.78" cy="0.18" r="0.75">
+      <stop offset="0" stop-color="#5b8cff" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#5b8cff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="wave1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#5b8cff" stop-opacity="0.10"/>
+    </linearGradient>
+    <pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1.5" fill="#ffffff" opacity="0.13"/>
+    </pattern>
+  </defs>
+
+  <!-- พื้นหลังไล่สีน้ำเงิน -->
+  <rect width="1920" height="640" fill="url(#bg)"/>
+  <rect width="1920" height="640" fill="url(#glow)"/>
+  <rect width="1920" height="640" fill="url(#dots)"/>
+
+  <!-- วงกลมตกแต่ง -->
+  <circle cx="1620" cy="110" r="300" fill="#ffffff" opacity="0.06"/>
+  <circle cx="1740" cy="330" r="180" fill="#5b8cff" opacity="0.18"/>
+  <circle cx="1500" cy="500" r="90" fill="#ffffff" opacity="0.08"/>
+  <circle cx="120" cy="560" r="200" fill="#5b8cff" opacity="0.15"/>
+  <circle cx="60" cy="80" r="120" fill="#ffffff" opacity="0.05"/>
+  <circle cx="880" cy="90" r="26" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3"/>
+  <circle cx="1060" cy="480" r="14" fill="#7ea4ff" opacity="0.5"/>
+
+  <!-- คลื่นด้านล่าง -->
+  <path d="M0 470 C 320 400 560 560 920 520 C 1240 484 1450 380 1920 440 L1920 640 L0 640 Z" fill="url(#wave1)"/>
+  <path d="M0 540 C 360 470 640 620 1000 580 C 1330 544 1560 470 1920 530 L1920 640 L0 640 Z" fill="#ffffff" opacity="0.10"/>
+  <path d="M0 596 C 420 540 760 650 1140 620 C 1440 596 1680 560 1920 600 L1920 640 L0 640 Z" fill="#f0f5ff" opacity="0.16"/>
+</svg>

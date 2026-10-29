@@ -1,6 +1,6 @@
 <template>
-  <!-- หน้าล็อกอินและฝั่งบุคลากร (User) แสดงเต็มจอ ไม่ใช้ Sidebar/Header ของ Admin -->
-  <div v-if="isLoginRoute || isUserRoute" class="h-full overflow-hidden text-slate-800 antialiased relative">
+  <!-- หน้าล็อกอิน / เว็บไซต์สรรหา (public) และฝั่งบุคลากร (User) แสดงเต็มจอ ไม่ใช้ Sidebar/Header ของ Admin -->
+  <div v-if="isLoginRoute || isPublicSiteRoute || isUserRoute" class="h-full overflow-hidden text-slate-800 antialiased relative">
     <RouterView />
     <Toast :message="toastMessage" />
   </div>
@@ -42,6 +42,7 @@ const { message: toastMessage } = useToast();
 const route = useRoute();
 
 const isLoginRoute = computed(() => route.path === '/login');
+const isPublicSiteRoute = computed(() => route.path.startsWith('/recruitment_site'));
 const isUserRoute = computed(() => route.path.startsWith('/user'));
 
 const handleToggleSidebar = () => {

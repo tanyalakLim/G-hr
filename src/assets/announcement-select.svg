@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" role="img" aria-label="รูปประกอบประกาศการคัดเลือกบุคลากร">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#021235"/>
+      <stop offset="0.45" stop-color="#062058"/>
+      <stop offset="1" stop-color="#153fb5"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.75" cy="0.2" r="0.75">
+      <stop offset="0" stop-color="#5b8cff" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#5b8cff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="wave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#5b8cff" stop-opacity="0.10"/>
+    </linearGradient>
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1.5" fill="#ffffff" opacity="0.13"/>
+    </pattern>
+  </defs>
+
+  <!-- พื้นหลังไล่สีน้ำเงิน (ชุดเดียวกับแบนเนอร์หลัก) -->
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <rect width="800" height="450" fill="url(#glow)"/>
+  <rect width="800" height="450" fill="url(#dots)"/>
+
+  <!-- วงกลมตกแต่ง -->
+  <circle cx="700" cy="70" r="150" fill="#ffffff" opacity="0.06"/>
+  <circle cx="740" cy="190" r="80" fill="#5b8cff" opacity="0.18"/>
+  <circle cx="80" cy="380" r="110" fill="#5b8cff" opacity="0.15"/>
+  <circle cx="640" cy="356" r="10" fill="#7ea4ff" opacity="0.5"/>
+  <circle cx="150" cy="90" r="20" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="3"/>
+
+  <!-- สัญลักษณ์การคัดเลือก: คน 2 คน -->
+  <g fill="#ffffff">
+    <circle cx="452" cy="152" r="38" opacity="0.45"/>
+    <path d="M 398 258 a 54 54 0 0 1 108 0 Z" opacity="0.45"/>
+    <circle cx="360" cy="176" r="52" opacity="0.9"/>
+    <path d="M 284 300 a 76 76 0 0 1 152 0 Z" opacity="0.9"/>
+  </g>
+
+  <!-- คลื่นด้านล่าง -->
+  <path d="M0 330 C 140 290 260 390 420 362 C 560 338 680 280 800 320 L800 450 L0 450 Z" fill="url(#wave)"/>
+  <path d="M0 392 C 180 350 360 430 540 404 C 660 388 740 360 800 380 L800 450 L0 450 Z" fill="#ffffff" opacity="0.10"/>
+</svg>

@@ -185,6 +185,20 @@ const routes: RouteRecordRaw[] = [
     meta: { menu: 'ui_kit', title: 'ตัวอย่าง UI' },
   },
 
+  // --- เว็บไซต์สรรหา (public — ไม่ต้องล็อกอิน, แสดงเต็มจอไม่มี Sidebar/Header) ---
+  {
+    path: '/recruitment_site',
+    name: 'recruitment-site',
+    component: () => import('../views/RecruitmentPublicSiteView.vue'),
+    meta: { title: 'เว็บไซต์ระบบสรรหาบุคลากร' },
+  },
+  {
+    path: '/recruitment_site/:section(select|exam|about)',
+    name: 'recruitment-site-section',
+    component: () => import('../views/RecruitmentPublicSiteView.vue'),
+    meta: { title: 'เว็บไซต์ระบบสรรหาบุคลากร' },
+  },
+
   // --- หมวดที่ยังไม่เปิดใช้งาน (placeholder) — เมนู leaf ---
   {
     path: '/acting',
@@ -247,6 +261,30 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/recruitment/recruitment_exam_round/:id',
+    name: 'recruitment-exam-round-detail',
+    component: () => import('../components/recruitment/RecruitmentExamRoundDetail.vue'),
+    props: true,
+    meta: {
+      menu: 'recruitment',
+      submenu: 'recruitment_exam',
+      nestedSubmenu: 'recruitment_exam_round',
+      title: 'รายละเอียดรอบสอบแข่งขัน',
+    },
+  },
+  {
+    path: '/recruitment/recruitment_exam_round/:id/applicant/:applicantId',
+    name: 'recruitment-applicant-detail',
+    component: () => import('../components/recruitment/RecruitmentApplicantDetail.vue'),
+    props: true,
+    meta: {
+      menu: 'recruitment',
+      submenu: 'recruitment_exam',
+      nestedSubmenu: 'recruitment_exam_round',
+      title: 'รายละเอียดผู้สมัครสอบ',
+    },
+  },
+  {
     path: '/recruitment/recruitment_website',
     name: 'recruitment-website-settings',
     component: () => import('../components/recruitment/RecruitmentWebsiteSettings.vue'),
@@ -268,6 +306,17 @@ const routes: RouteRecordRaw[] = [
   nestedPlaceholder('recruitment', 'recruitment_exam'),
   nestedPlaceholder('recruitment', 'recruitment_select'),
   nestedPlaceholder('recruitment', 'recruitment_other'),
+  // --- บรรจุ แต่งตั้ง ย้าย โอน (placement) ---
+  {
+    path: '/placement/placement_pass',
+    name: 'placement-pass-list',
+    component: () => import('../components/placement/PlacementPassList.vue'),
+    meta: {
+      menu: 'placement',
+      submenu: 'placement_pass',
+      title: 'รายชื่อผู้สอบผ่าน',
+    },
+  },
   ...accordionPlaceholder('placement', 'placement_pass'),
   ...accordionPlaceholder('dismissal', 'dismissal_retirement'),
   ...accordionPlaceholder('insignia', 'insignia_round'),
@@ -367,6 +416,9 @@ router.beforeEach((to) => {
   const authed = isAuthenticated.value;
   const isUserArea = to.path.startsWith('/user');
   const homePath = authRole.value === 'user' ? '/user/home' : '/home';
+
+  // เว็บไซต์สรรหาเป็นหน้า public — เข้าชมได้โดยไม่ต้องล็อกอิน (แต่ล็อกอินแล้วก็ดูได้)
+  if (to.path.startsWith('/recruitment_site')) return;
 
   if (!authed) {
     // ยังไม่ล็อกอิน: ไป /login ได้เสมอ (กติกา role ใช้เฉพาะตอนล็อกอินแล้ว)
