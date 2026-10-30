@@ -198,6 +198,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/RecruitmentPublicSiteView.vue'),
     meta: { title: 'เว็บไซต์ระบบสรรหาบุคลากร' },
   },
+  {
+    path: '/recruitment_site/announcement/:id',
+    name: 'recruitment-site-announcement',
+    component: () => import('../views/RecruitmentPublicSiteView.vue'),
+    meta: { title: 'รายละเอียดประกาศ — เว็บไซต์ระบบสรรหาบุคลากร' },
+  },
 
   // --- หมวดที่ยังไม่เปิดใช้งาน (placeholder) — เมนู leaf ---
   {

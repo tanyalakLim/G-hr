@@ -322,16 +322,79 @@
         />
         <section class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
           <template v-if="selectAnnouncements.length">
-            <!-- แถบสรุปจำนวนประกาศ -->
-            <div class="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+            <!-- แถบเครื่องมือ: สรุปจำนวนประกาศ (เรียบง่าย ไม่มีกรอบ) + ช่องค้นหา -->
+            <div class="mb-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-slate-200 pb-4">
               <p class="text-sm text-slate-600">
                 รวมประกาศการคัดเลือกทั้งหมด <span class="font-bold text-bma-700">{{ selectAnnouncements.length }}</span> ฉบับ
+                <span class="select-none text-slate-300" aria-hidden="true"> · </span>
+                <span class="inline-flex items-center gap-1.5 text-xs text-slate-500">
+                  <CalendarDays class="w-3.5 h-3.5" />
+                  อัปเดตล่าสุด {{ selectAnnouncements[0].date }}
+                </span>
               </p>
-              <p class="inline-flex items-center gap-1.5 text-xs text-slate-500">
-                <CalendarDays class="w-3.5 h-3.5" />
-                อัปเดตล่าสุด {{ selectAnnouncements[0].date }}
-              </p>
+              <!-- ช่องค้นหาประกาศ -->
+              <div class="relative w-full sm:w-72">
+                <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <input
+                  v-model="selectQuery"
+                  type="search"
+                  aria-label="ค้นหาประกาศ"
+                  placeholder="ค้นหาประกาศ..."
+                  class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-9 text-sm text-slate-700 placeholder:text-slate-400 [&::-webkit-search-cancel-button]:appearance-none focus:border-bma-400 focus:outline-none focus:ring-2 focus:ring-bma-100"
+                />
+                <button
+                  v-if="selectQuery"
+                  type="button"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                  title="ล้างคำค้นหา"
+                  @click="selectQuery = ''"
+                >
+                  <X class="h-4 w-4" />
+                </button>
+              </div>
             </div>
+
+            <!-- โหมดค้นหา: แสดงเฉพาะรายการที่ตรงคำค้น (ซ่อน featured เพื่อไม่ให้สับสน) -->
+            <template v-if="selectQuery.trim()">
+              <p class="mb-4 text-xs text-slate-500">พบ <span class="font-bold text-bma-700">{{ filteredSelectAnnouncements.length }}</span> ฉบับจากคำค้น “{{ selectQuery.trim() }}”</p>
+              <div v-if="filteredSelectAnnouncements.length" class="space-y-3">
+                <button
+                  v-for="item in filteredSelectAnnouncements"
+                  :key="item.id"
+                  type="button"
+                  class="group flex w-full items-center gap-4 rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-left hover:border-bma-300 hover:bg-bma-50/40 transition-colors cursor-pointer sm:px-5"
+                  @click="openAnnouncement(item)"
+                >
+                  <div class="w-14 shrink-0 rounded-lg bg-bma-50 py-2 text-center">
+                    <p class="text-lg font-bold leading-none text-bma-700">{{ dateParts(item.date).day }}</p>
+                    <p class="mt-1 text-[10px] font-medium whitespace-nowrap text-bma-600">{{ dateParts(item.date).monthAbbr }} {{ dateParts(item.date).year }}</p>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-semibold text-slate-800 group-hover:text-bma-700 transition-colors">{{ item.title }}</p>
+                    <p class="mt-0.5 truncate text-xs text-slate-500">{{ item.excerpt }}</p>
+                  </div>
+                  <span class="hidden shrink-0 items-center gap-1.5 text-xs text-slate-500 sm:inline-flex">
+                    <FileText class="w-3.5 h-3.5" />
+                    {{ item.attachments.length }}
+                  </span>
+                  <ChevronRight class="w-4.5 h-4.5 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5" />
+                </button>
+              </div>
+              <!-- ไม่พบผลลัพธ์การค้นหา -->
+              <div v-else class="rounded-2xl border border-dashed border-slate-300 bg-white/60 p-10 text-center">
+                <Search class="mx-auto h-8 w-8 text-slate-300" />
+                <p class="mt-3 text-sm text-slate-500">ไม่พบประกาศที่ตรงกับคำค้น “{{ selectQuery.trim() }}”</p>
+                <button
+                  type="button"
+                  class="mt-3 text-sm font-semibold text-bma-700 hover:text-bma-600 transition-colors cursor-pointer"
+                  @click="selectQuery = ''"
+                >
+                  ล้างคำค้นหา
+                </button>
+              </div>
+            </template>
+
+            <template v-else>
 
             <!-- ประกาศล่าสุด (featured) -->
             <button
@@ -390,6 +453,7 @@
                 </button>
               </div>
             </div>
+            </template>
           </template>
           <EmptyState v-else text="ยังไม่มีประกาศการคัดเลือก" />
         </section>
@@ -404,16 +468,79 @@
         />
         <section class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
           <template v-if="latestExam">
-            <!-- แถบสรุปจำนวนประกาศ -->
-            <div class="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+            <!-- แถบเครื่องมือ: สรุปจำนวนประกาศ (เรียบง่าย ไม่มีกรอบ) + ช่องค้นหา -->
+            <div class="mb-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-slate-200 pb-4">
               <p class="text-sm text-slate-600">
                 รวมประกาศการสอบแข่งขันทั้งหมด <span class="font-bold text-bma-700">{{ examAnnouncements.length }}</span> ฉบับ
+                <span class="select-none text-slate-300" aria-hidden="true"> · </span>
+                <span class="inline-flex items-center gap-1.5 text-xs text-slate-500">
+                  <CalendarDays class="w-3.5 h-3.5" />
+                  อัปเดตล่าสุด {{ latestExam.date }}
+                </span>
               </p>
-              <p class="inline-flex items-center gap-1.5 text-xs text-slate-500">
-                <CalendarDays class="w-3.5 h-3.5" />
-                อัปเดตล่าสุด {{ latestExam.date }}
-              </p>
+              <!-- ช่องค้นหาประกาศ -->
+              <div class="relative w-full sm:w-72">
+                <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <input
+                  v-model="examQuery"
+                  type="search"
+                  aria-label="ค้นหาประกาศ"
+                  placeholder="ค้นหาประกาศ..."
+                  class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-9 text-sm text-slate-700 placeholder:text-slate-400 [&::-webkit-search-cancel-button]:appearance-none focus:border-bma-400 focus:outline-none focus:ring-2 focus:ring-bma-100"
+                />
+                <button
+                  v-if="examQuery"
+                  type="button"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                  title="ล้างคำค้นหา"
+                  @click="examQuery = ''"
+                >
+                  <X class="h-4 w-4" />
+                </button>
+              </div>
             </div>
+
+            <!-- โหมดค้นหา: แสดงเฉพาะรายการที่ตรงคำค้น (ซ่อน featured เพื่อไม่ให้สับสน) -->
+            <template v-if="examQuery.trim()">
+              <p class="mb-4 text-xs text-slate-500">พบ <span class="font-bold text-bma-700">{{ filteredExamAnnouncements.length }}</span> พบจากคำค้น “{{ examQuery.trim() }}”</p>
+              <div v-if="filteredExamAnnouncements.length" class="space-y-3">
+                <button
+                  v-for="item in filteredExamAnnouncements"
+                  :key="item.id"
+                  type="button"
+                  class="group flex w-full items-center gap-4 rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-left hover:border-bma-300 hover:bg-bma-50/40 transition-colors cursor-pointer sm:px-5"
+                  @click="openAnnouncement(item)"
+                >
+                  <div class="w-14 shrink-0 rounded-lg bg-bma-50 py-2 text-center">
+                    <p class="text-lg font-bold leading-none text-bma-700">{{ dateParts(item.date).day }}</p>
+                    <p class="mt-1 text-[10px] font-medium whitespace-nowrap text-bma-600">{{ dateParts(item.date).monthAbbr }} {{ dateParts(item.date).year }}</p>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-semibold text-slate-800 group-hover:text-bma-700 transition-colors">{{ item.title }}</p>
+                    <p class="mt-0.5 truncate text-xs text-slate-500">{{ item.excerpt }}</p>
+                  </div>
+                  <span class="hidden shrink-0 items-center gap-1.5 text-xs text-slate-500 sm:inline-flex">
+                    <FileText class="w-3.5 h-3.5" />
+                    {{ item.attachments.length }}
+                  </span>
+                  <ChevronRight class="w-4.5 h-4.5 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5" />
+                </button>
+              </div>
+              <!-- ไม่พบผลลัพธ์การค้นหา -->
+              <div v-else class="rounded-2xl border border-dashed border-slate-300 bg-white/60 p-10 text-center">
+                <Search class="mx-auto h-8 w-8 text-slate-300" />
+                <p class="mt-3 text-slate-500">ไม่พบประกาศที่ตรงกับคำค้น “{{ examQuery.trim() }}”</p>
+                <button
+                  type="button"
+                  class="mt-3 text-sm font-semibold text-bma-700 hover:text-bma-600 transition-colors cursor-pointer"
+                  @click="examQuery = ''"
+                >
+                  ล้างคำค้นหา
+                </button>
+              </div>
+            </template>
+
+            <template v-else>
 
             <!-- ประกาศล่าสุด (featured) -->
             <button
@@ -476,8 +603,121 @@
                 </button>
               </div>
             </div>
+            </template>
           </template>
           <EmptyState v-else text="ยังไม่มีประกาศการสอบแข่งขัน" />
+        </section>
+      </template>
+
+      <!-- ===== หน้า รายละเอียดประกาศ (route /recruitment_site/announcement/:id) ===== -->
+      <template v-else-if="section === 'detail'">
+        <template v-if="detailAnnouncement">
+          <!-- แบนเนอร์ย่อยด้านบน -->
+          <PageHero
+            :eyebrow="detailAnnouncement.category === 'select' ? 'การคัดเลือก' : 'การสอบแข่งขัน'"
+            title="รายละเอียดประกาศ"
+            :desc="detailAnnouncement.excerpt"
+          />
+
+          <section class="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+            <!-- ปุ่มย้อนกลับ -->
+            <button
+              type="button"
+              class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 hover:border-bma-300 hover:text-bma-700 transition-colors cursor-pointer"
+              @click="router.back()"
+            >
+              <ChevronRight class="w-4 h-4 rotate-180" />
+              ย้อนกลับ
+            </button>
+
+            <!-- เนื้อหาประกาศ -->
+            <article class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <!-- รูปประกอบประกาศ -->
+              <img :src="coverUrl(detailAnnouncement)" :alt="detailAnnouncement.title" class="h-56 w-full object-cover sm:h-72" />
+              <div class="p-5 sm:p-8 space-y-4">
+                <!-- แถวข้อมูล: ป้ายหมวด + วันที่ประกาศ -->
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="inline-flex items-center rounded-full bg-bma-50 text-bma-700 px-2.5 py-0.5 text-[10px] font-semibold ring-1 ring-bma-100">
+                    {{ detailAnnouncement.category === 'select' ? 'การคัดเลือก' : 'การสอบแข่งขัน' }}
+                  </span>
+                  <span class="inline-flex items-center gap-1.5 text-xs text-slate-500">
+                    <CalendarDays class="w-3.5 h-3.5" />
+                    ประกาศเมื่อวันที่ {{ detailAnnouncement.date }}
+                  </span>
+                </div>
+                <h2 class="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">{{ detailAnnouncement.title }}</h2>
+                <!-- อ้างอิงหนังสือราชการ (ถ้ามี) -->
+                <div
+                  v-if="detailAnnouncement.reference"
+                  class="inline-flex items-center gap-1.5 rounded-xl bg-amber-50 text-amber-700 px-3 py-1.5 text-xs font-semibold ring-1 ring-amber-100"
+                >
+                  <ScrollText class="w-3.5 h-3.5 shrink-0" />
+                  {{ detailAnnouncement.reference }}
+                </div>
+                <!-- ข้อมูลเด่นของประกาศ (ถ้ามี) -->
+                <ul v-if="detailAnnouncement.highlights?.length" class="space-y-1.5 rounded-xl bg-slate-50 p-4">
+                  <li v-for="hl in detailAnnouncement.highlights" :key="hl.label" class="flex items-start gap-2 text-sm text-slate-600">
+                    <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-bma-400" aria-hidden="true"></span>
+                    <span class="shrink-0 font-semibold text-slate-700">{{ hl.label }}:</span>
+                    <span>{{ hl.value }}</span>
+                  </li>
+                </ul>
+                <!-- เนื้อความประกาศ -->
+                <p v-for="(para, i) in detailAnnouncement.body" :key="i" class="text-sm text-slate-700 leading-relaxed">
+                  {{ para }}
+                </p>
+                <!-- เอกสารแนบ (ถ้ามี) -->
+                <div v-if="detailAnnouncement.attachments.length" class="pt-3 border-t border-slate-100">
+                  <h4 class="mb-2.5 text-xs font-bold uppercase tracking-wide text-slate-500">เอกสารแนบ</h4>
+                  <ul class="space-y-2">
+                    <li v-for="file in detailAnnouncement.attachments" :key="file">
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm text-slate-700 hover:border-bma-300 hover:text-bma-700 transition-colors cursor-pointer"
+                        @click="show('ระบบจำลอง — ยังไม่มีไฟล์เอกสารแนบจริง')"
+                      >
+                        <FileText class="w-4 h-4 text-bma-600 shrink-0" />
+                        {{ file }}
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <!-- ประกาศอื่นๆ ในหมวดเดียวกัน (แถวเดียวกับ "ประกาศก่อนหน้า" ของหน้า การคัดเลือก/การสอบแข่งขัน) -->
+            <div v-if="relatedAnnouncements.length" class="mt-8">
+              <h3 class="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">ประกาศอื่นๆ ในหมวดเดียวกัน</h3>
+              <div class="space-y-3">
+                <button
+                  v-for="item in relatedAnnouncements"
+                  :key="item.id"
+                  type="button"
+                  class="group flex w-full items-center gap-4 rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-left hover:border-bma-300 hover:bg-bma-50/40 transition-colors cursor-pointer sm:px-5"
+                  @click="openAnnouncement(item)"
+                >
+                  <!-- บล็อกวันที่แบบปฏิทิน -->
+                  <div class="w-14 shrink-0 rounded-lg bg-bma-50 py-2 text-center">
+                    <p class="text-lg font-bold leading-none text-bma-700">{{ dateParts(item.date).day }}</p>
+                    <p class="mt-1 text-[10px] font-medium whitespace-nowrap text-bma-600">{{ dateParts(item.date).monthAbbr }} {{ dateParts(item.date).year }}</p>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-semibold text-slate-800 group-hover:text-bma-700 transition-colors">{{ item.title }}</p>
+                    <p class="mt-0.5 truncate text-xs text-slate-500">{{ item.excerpt }}</p>
+                  </div>
+                  <span class="hidden shrink-0 items-center gap-1.5 text-xs text-slate-500 sm:inline-flex">
+                    <FileText class="w-3.5 h-3.5" />
+                    {{ item.attachments.length }}
+                  </span>
+                  <ChevronRight class="w-4.5 h-4.5 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5" />
+                </button>
+              </div>
+            </div>
+          </section>
+        </template>
+        <!-- ไม่พบประกาศตาม id ที่ระบุ -->
+        <section v-else class="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+          <EmptyState text="ไม่พบประกาศที่ต้องการ" />
         </section>
       </template>
 
@@ -575,91 +815,12 @@
         </p>
       </div>
     </footer>
-
-    <!-- ===== Modal รายละเอียดประกาศ ===== -->
-    <Teleport to="body">
-      <Transition
-        enter-active-class="transition duration-200 ease-out"
-        enter-from-class="opacity-0"
-        leave-active-class="transition duration-150 ease-in"
-        leave-to-class="opacity-0"
-      >
-        <div v-if="selectedAnnouncement" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-          <div class="absolute inset-0 bg-slate-900/55" @click="closeAnnouncement"></div>
-          <div class="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
-            <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-slate-100 px-5 sm:px-7 py-4 flex items-start justify-between gap-4">
-              <div class="min-w-0">
-                <span class="inline-flex items-center rounded-full bg-bma-50 text-bma-700 px-2.5 py-1 text-[11px] font-semibold">
-                  {{ selectedAnnouncement.category === 'select' ? 'การคัดเลือก' : 'การสอบแข่งขัน' }}
-                </span>
-                <h2 class="mt-2 text-base sm:text-lg font-bold text-slate-900 leading-snug">{{ selectedAnnouncement.title }}</h2>
-                <p class="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
-                  <CalendarDays class="w-3.5 h-3.5" />
-                  ประกาศเมื่อวันที่ {{ selectedAnnouncement.date }}
-                </p>
-              </div>
-              <button
-                type="button"
-                class="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-                title="ปิด"
-                @click="closeAnnouncement"
-              >
-                <X class="w-5 h-5" />
-              </button>
-            </div>
-            <div class="px-5 sm:px-7 py-5 space-y-3">
-              <!-- รูปประกอบประกาศ -->
-              <img :src="coverUrl(selectedAnnouncement)" :alt="selectedAnnouncement.title" class="h-44 w-full rounded-xl object-cover sm:h-52" />
-              <!-- อ้างอิงหนังสือราชการ (ถ้ามี) -->
-              <div
-                v-if="selectedAnnouncement.reference"
-                class="inline-flex items-center gap-1.5 rounded-xl bg-amber-50 text-amber-700 px-3 py-1.5 text-xs font-semibold ring-1 ring-amber-100"
-              >
-                <ScrollText class="w-3.5 h-3.5 shrink-0" />
-                {{ selectedAnnouncement.reference }}
-              </div>
-              <!-- ข้อมูลเด่นของประกาศ (ถ้ามี) -->
-              <ul v-if="selectedAnnouncement.highlights?.length" class="space-y-1.5 rounded-xl bg-slate-50 p-4">
-                <li v-for="hl in selectedAnnouncement.highlights" :key="hl.label" class="flex items-start gap-2 text-sm text-slate-600">
-                  <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-bma-400" aria-hidden="true"></span>
-                  <span class="shrink-0 font-semibold text-slate-700">{{ hl.label }}:</span>
-                  <span>{{ hl.value }}</span>
-                </li>
-              </ul>
-              <p v-for="(para, i) in selectedAnnouncement.body" :key="i" class="text-sm text-slate-700 leading-relaxed">
-                {{ para }}
-              </p>
-              <div v-if="selectedAnnouncement.attachments.length" class="pt-3 border-t border-slate-100">
-                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2.5">เอกสารแนบ</h4>
-                <ul class="space-y-2">
-                  <li v-for="file in selectedAnnouncement.attachments" :key="file">
-                    <button
-                      type="button"
-                      class="inline-flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm text-slate-700 hover:border-bma-300 hover:text-bma-700 transition-colors cursor-pointer"
-                      @click="show('ระบบจำลอง — ยังไม่มีไฟล์เอกสารแนบจริง')"
-                    >
-                      <FileText class="w-4 h-4 text-bma-600 shrink-0" />
-                      {{ file }}
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="sticky bottom-0 bg-white/95 backdrop-blur border-t border-slate-100 px-5 sm:px-7 py-4 flex justify-end">
-              <button type="button" class="rounded-xl bg-bma-700 hover:bg-bma-600 text-white text-sm font-semibold px-5 py-2.5 transition-colors cursor-pointer" @click="closeAnnouncement">
-                ปิดหน้าต่าง
-              </button>
-            </div>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, defineComponent, h, ref, type Component } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import {
   CalendarDays,
   ChevronRight,
@@ -675,9 +836,8 @@ import {
   PenLine,
   Phone,
   ScrollText,
-  ShieldCheck,
+  Search,
   UserPlus,
-  Users,
   X,
 } from 'lucide-vue-next';
 import logoUrl from '../assets/logo.png';
@@ -695,6 +855,7 @@ import {
 const { show } = useToast();
 const { siteLogo, siteBanner } = useRecruitmentSite();
 const route = useRoute();
+const router = useRouter();
 
 // --- เมนูนำทาง / สโลแกน / บริการหลัก / หน่วยงาน ---
 const NAV_ITEMS = [
@@ -703,8 +864,6 @@ const NAV_ITEMS = [
   { key: 'exam', label: 'การสอบแข่งขัน', to: '/recruitment_site/exam' },
   { key: 'about', label: 'เกี่ยวกับเรา', to: '/recruitment_site/about' },
 ] as const;
-
-const SLOGAN = ['โปร่งใส', 'เป็นระบบ', 'เที่ยงธรรม', 'ตรวจสอบได้'];
 
 // 4 เสาหลักของระบบ (Core Pillars) — ใช้ในหน้าแรก (การ์ด 4 ระยะ) และหน้า เกี่ยวกับเรา
 const CORE_PILLARS: { no: string; icon: Component; title: string; desc: string }[] = [
@@ -728,8 +887,10 @@ const ORGANIZATIONS = [
 const mobileMenuOpen = ref(false);
 
 // --- ส่วนปัจจุบันของเว็บ (จาก path) ---
-const section = computed<'home' | 'select' | 'exam' | 'about'>(() => {
+const section = computed<'home' | 'select' | 'exam' | 'about' | 'detail'>(() => {
   const sub = route.path.split('/')[2];
+  // หน้ารายละเอียดประกาศ (/recruitment_site/announcement/:id) → section 'detail'
+  if (sub === 'announcement') return 'detail';
   if (sub === 'select' || sub === 'exam' || sub === 'about') return sub;
   return 'home';
 });
@@ -759,8 +920,16 @@ const dateParts = (date: string) => {
   const [day = '', month = '', year = ''] = date.split(' ');
   return { day, monthAbbr: MONTH_ABBR[month] ?? month, year };
 };
+// แปลงวันที่ไทย ('28 ตุลาคม 2569') เป็นตัวเลขเปรียบเทียบ เพื่อเรียงล่าสุด → เก่าสุดเสมอ (ไม่พึ่งลำดับในไฟล์ข้อมูล)
+const thaiDateValue = (date: string) => {
+  const [day = '', month = '', year = ''] = date.split(' ');
+  const monthIndex = Object.keys(MONTH_ABBR).indexOf(month);
+  return (Number(year) || 0) * 10000 + (monthIndex + 1) * 100 + (Number(day) || 0);
+};
 const selectAnnouncements = computed(() =>
-  RECRUITMENT_ANNOUNCEMENTS.filter((a) => a.category === 'select')
+  RECRUITMENT_ANNOUNCEMENTS.filter((a) => a.category === 'select').sort(
+    (a, b) => thaiDateValue(b.date) - thaiDateValue(a.date)
+  )
 );
 // หน้าแรกแสดงเฉพาะประกาศการคัดเลือกล่าสุด 4 รายการ (หน้า การคัดเลือก แสดงทั้งหมด)
 const homeSelectAnnouncements = computed(() => selectAnnouncements.value.slice(0, 4));
@@ -772,18 +941,42 @@ const coverUrl = (item: RecruitmentAnnouncement) =>
 const latestExam = latestAnnouncement('exam');
 // รายการประกาศการสอบแข่งขันทั้งหมด (ใช้นับจำนวนในแถบสรุปของหน้า การสอบแข่งขัน)
 const examAnnouncements = computed(() =>
-  RECRUITMENT_ANNOUNCEMENTS.filter((a) => a.category === 'exam')
+  RECRUITMENT_ANNOUNCEMENTS.filter((a) => a.category === 'exam').sort(
+    (a, b) => thaiDateValue(b.date) - thaiDateValue(a.date)
+  )
 );
 const pastExamAnnouncements = computed(() => examAnnouncements.value.slice(1));
 
-// --- Modal รายละเอียดประกาศ ---
-const selectedAnnouncement = ref<RecruitmentAnnouncement | null>(null);
+// --- ค้นหาประกาศ (หน้า การคัดเลือก / การสอบแข่งขัน) ค้นจากชื่อเรื่อง เนื้อหาย่อ และเลขอ้างอิง ---
+const selectQuery = ref('');
+const examQuery = ref('');
+const matchesQuery = (item: RecruitmentAnnouncement, query: string) => {
+  const needle = query.trim().toLowerCase();
+  if (!needle) return true;
+  return [item.title, item.excerpt, item.reference ?? ''].some((text) => text.toLowerCase().includes(needle));
+};
+const filteredSelectAnnouncements = computed(() =>
+  selectAnnouncements.value.filter((a) => matchesQuery(a, selectQuery.value))
+);
+const filteredExamAnnouncements = computed(() =>
+  examAnnouncements.value.filter((a) => matchesQuery(a, examQuery.value))
+);
+
+// --- หน้ารายละเอียดประกาศ (route /recruitment_site/announcement/:id) ---
+// คลิกประกาศจากหน้าใดก็ได้ → เปลี่ยนเป็นหน้า route แทนการเปิด popup
 const openAnnouncement = (item: RecruitmentAnnouncement) => {
-  selectedAnnouncement.value = item;
+  router.push('/recruitment_site/announcement/' + item.id);
 };
-const closeAnnouncement = () => {
-  selectedAnnouncement.value = null;
-};
+// ประกาศปัจจุบันจาก route param (reactive — คลิกประกาศที่เกี่ยวข้องแล้วหน้าอัปเดตทันที)
+const detailAnnouncement = computed(() =>
+  RECRUITMENT_ANNOUNCEMENTS.find((a) => a.id === route.params.id)
+);
+// ประกาศอื่นๆ ในหมวดเดียวกัน (ไม่รวมฉบับปัจจุบัน) สูงสุด 3 รายการ
+const relatedAnnouncements = computed(() => {
+  const current = detailAnnouncement.value;
+  if (!current) return [];
+  return RECRUITMENT_ANNOUNCEMENTS.filter((a) => a.category === current.category && a.id !== current.id).slice(0, 3);
+});
 
 // --- ส่วนประกอบย่อยของหน้า (local) ---
 // แบนเนอร์ย่อยด้านบนของแต่ละหน้าย่อย
