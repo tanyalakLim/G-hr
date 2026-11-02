@@ -784,6 +784,15 @@
         </section>
       </template>
 
+      <!-- ===== หน้า แบบฟอร์มข้อมูลสมัครสอบ (route /recruitment_site/announcement/:id/apply) ===== -->
+      <template v-else-if="section === 'apply'">
+        <RecruitmentApplyForm
+          :announcement="detailAnnouncement"
+          :position="applyPosition"
+          :category="detailAnnouncement?.category ?? 'exam'"
+        />
+      </template>
+
       <!-- ===== หน้า เข้าสู่ระบบผู้สมัคร (public — แยกจาก login ระบบภายใน /login) ===== -->
       <template v-else-if="section === 'login'">
         <section class="w-full max-w-md mx-auto px-4 sm:px-6 py-10 sm:py-16">
@@ -796,6 +805,13 @@
               <p class="mt-1.5 text-xs sm:text-sm text-slate-500 leading-relaxed">
                 สำหรับผู้สมัครเข้ารับการคัดเลือกและสอบแข่งขัน ตรวจสอบสถานะการสมัคร บัตรประจำตัวสอบ และผลการคัดเลือก
               </p>
+              <!-- แถบแจ้งเตือนเมื่อถูกส่งมาจากปุ่มสมัครสอบ (ล็อกอินแล้วระบบพากลับไปแบบฟอร์มเอง) -->
+              <div v-if="pendingLoginRedirect" class="mt-4 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-left">
+                <TriangleAlert class="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                <p class="text-[11px] font-medium leading-relaxed text-amber-700">
+                  กรุณาเข้าสู่ระบบก่อนสมัคร{{ detailAnnouncement?.category === 'select' ? 'คัดเลือก' : 'สอบ' }} — เมื่อเข้าสู่ระบบสำเร็จ ระบบจะพากลับไปหน้าแบบฟอร์มสมัครที่ท่านกดมาโดยอัตโนมัติ
+                </p>
+              </div>
             </div>
 
             <form class="mt-7 space-y-4" @submit.prevent="handleRecruitSignIn">
@@ -993,15 +1009,17 @@ import {
   Phone,
   ScrollText,
   Search,
+  TriangleAlert,
   UserPlus,
   UserRound,
   X,
 } from 'lucide-vue-next';
 import logoUrl from '../assets/logo.png';
-import defaultBannerUrl from '../assets/banner-default.svg';
+import defaultBannerUrl from '../assets/banner-default.jpg';
 import examCoverUrl from '../assets/announcement-exam.png';
 import selectCoverUrl from '../assets/announcement-select.png';
 import PageHero from '../components/recruitment/PageHero.vue';
+import RecruitmentApplyForm from '../components/recruitment/RecruitmentApplyForm.vue';
 import { useToast } from '../composables/useToast';
 import { useRecruitmentSite } from '../composables/useRecruitmentSite';
 import { useRecruitmentAuth } from '../composables/useRecruitmentAuth';
@@ -1046,10 +1064,11 @@ const ORGANIZATIONS = [
 const mobileMenuOpen = ref(false);
 
 // --- ส่วนปัจจุบันของเว็บ (จาก path) ---
-const section = computed<'home' | 'select' | 'exam' | 'about' | 'detail' | 'login'>(() => {
+const section = computed<'home' | 'select' | 'exam' | 'about' | 'detail' | 'apply' | 'login'>(() => {
   const sub = route.path.split('/')[2];
   // หน้ารายละเอียดประกาศ (/recruitment_site/announcement/:id) → section 'detail'
-  if (sub === 'announcement') return 'detail';
+  // หน้าแบบฟอร์มสมัครสอบ (/recruitment_site/announcement/:id/apply) → section 'apply'
+  if (sub === 'announcement') return route.path.endsWith('/apply') ? 'apply' : 'detail';
   if (sub === 'select' || sub === 'exam' || sub === 'about' || sub === 'login') return sub;
   return 'home';
 });
@@ -1142,6 +1161,10 @@ const { isRecruitAuthenticated, recruitDisplayName, signIn: recruitSignIn, signO
 const recruitAccount = ref('');
 const recruitPassword = ref('');
 const showRecruitPassword = ref(false);
+// มีปลายทางที่ตั้งใจไว้ (ถูกส่งมาจากปุ่มสมัครสอบตอนยังไม่ล็อกอิน) — ใช้แสดงแถบแจ้งเตือนบนหน้าล็อกอิน
+const pendingLoginRedirect = computed(
+  () => typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/recruitment_site')
+);
 const handleRecruitSignIn = () => {
   const account = recruitAccount.value.trim();
   if (account.length < 4) {
@@ -1155,7 +1178,14 @@ const handleRecruitSignIn = () => {
   // จำลอง: ใช้ส่วนหน้าของอีเมล หรือบัญชีที่กรอก เป็นชื่อแสดง
   recruitSignIn(account.includes('@') ? account.split('@')[0] : account);
   show('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับ');
-  router.push('/recruitment_site');
+  // ถ้าถูกส่งมาล็อกอินจากหน้าอื่น (เช่น กดสมัครสอบตอนยังไม่ล็อกอิน) ให้กลับไปหน้านั้น — จำกัดเฉพาะภายในเว็บสรรหา
+  const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '';
+  const position = typeof route.query.position === 'string' ? route.query.position : '';
+  if (redirect.startsWith('/recruitment_site')) {
+    router.push({ path: redirect, query: position ? { position } : undefined });
+  } else {
+    router.push('/recruitment_site');
+  }
 };
 const handleRecruitSignOut = () => {
   recruitSignOut();
@@ -1165,13 +1195,27 @@ const handleRecruitSignOut = () => {
 
 // --- สมัครสอบในหน้ารายละเอียดประกาศ (กลุ่มประเภทตำแหน่ง พับ/กางได้ เปิดกลุ่มแรกไว้) ---
 const expandedPositionGroup = ref<number | null>(0);
+// ตำแหน่งที่เลือกสมัคร (จาก query ?position= — ส่งต่อให้แบบฟอร์มข้อมูลสมัครสอบ)
+const applyPosition = computed(() => (typeof route.query.position === 'string' ? route.query.position : ''));
 const handleApplyExam = (position: string) => {
+  if (!detailAnnouncement.value) return;
+  // ยังไม่ล็อกอิน: พาไปหน้าเข้าสู่ระบบก่อน พร้อมจำปลายทางแบบฟอร์มสมัครสอบที่กดมา เพื่อพากลับหลังล็อกอินสำเร็จ
   if (!isRecruitAuthenticated.value) {
     show('กรุณาเข้าสู่ระบบผู้สมัครก่อนสมัครสอบ');
-    router.push('/recruitment_site/login');
+    router.push({
+      path: '/recruitment_site/login',
+      query: {
+        redirect: `/recruitment_site/announcement/${detailAnnouncement.value.id}/apply`,
+        position,
+      },
+    });
     return;
   }
-  show('สมัครตำแหน่ง' + position + ' — ระบบจำลอง ยังไม่เปิดใช้งานจริง');
+  // เปิดหน้าแบบฟอร์ม "ข้อมูลสมัครสอบ" ของตำแหน่งที่เลือก
+  router.push({
+    path: `/recruitment_site/announcement/${detailAnnouncement.value.id}/apply`,
+    query: { position },
+  });
 };
 
 // --- ส่วนประกอบย่อยของหน้า (local) ---
