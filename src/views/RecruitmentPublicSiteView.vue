@@ -28,8 +28,23 @@
         </nav>
 
         <div class="flex items-center gap-2">
+          <!-- ล็อกอินแล้ว: ชื่อผู้สมัคร + ปุ่มออกจากระบบ / ยังไม่ล็อกอิน: ปุ่มเข้าสู่ระบบ (เข้าหน้า login ของเว็บสรรหา) -->
+          <template v-if="isRecruitAuthenticated">
+            <span class="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-bma-50 text-bma-800 text-xs font-semibold px-3 py-2.5 ring-1 ring-bma-100 max-w-[10rem]">
+              <UserRound class="w-4 h-4 shrink-0" />
+              <span class="truncate">{{ recruitDisplayName || 'ผู้สมัคร' }}</span>
+            </span>
+            <button
+              type="button"
+              class="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-slate-200 text-slate-600 hover:border-bma-300 hover:text-bma-700 text-xs font-semibold px-3.5 py-2.5 transition-colors cursor-pointer"
+              @click="handleRecruitSignOut"
+            >
+              ออกจากระบบ
+            </button>
+          </template>
           <RouterLink
-            to="/login"
+            v-else
+            to="/recruitment_site/login"
             class="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-bma-700 hover:bg-bma-600 text-white text-xs font-semibold px-4 py-2.5 transition-colors"
           >
             <LogIn class="w-4 h-4" />
@@ -60,6 +75,22 @@
         >
           {{ item.label }}
         </RouterLink>
+        <RouterLink
+          v-if="!isRecruitAuthenticated"
+          to="/recruitment_site/login"
+          class="block px-3 py-2.5 rounded-lg text-sm font-medium bg-bma-50 text-bma-700"
+          @click="mobileMenuOpen = false"
+        >
+          เข้าสู่ระบบ
+        </RouterLink>
+        <button
+          v-else
+          type="button"
+          class="block w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+          @click="handleRecruitSignOut"
+        >
+          ออกจากระบบ
+        </button>
       </nav>
     </header>
 
@@ -322,15 +353,10 @@
         />
         <section class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
           <template v-if="selectAnnouncements.length">
-            <!-- แถบเครื่องมือ: สรุปจำนวนประกาศ (เรียบง่าย ไม่มีกรอบ) + ช่องค้นหา -->
+            <!-- แถบเครื่องมือ: สรุปจำนวนประกาศ + ช่องค้นหา (เรียบง่าย ไม่มีกรอบ) -->
             <div class="mb-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-slate-200 pb-4">
               <p class="text-sm text-slate-600">
                 รวมประกาศการคัดเลือกทั้งหมด <span class="font-bold text-bma-700">{{ selectAnnouncements.length }}</span> ฉบับ
-                <span class="select-none text-slate-300" aria-hidden="true"> · </span>
-                <span class="inline-flex items-center gap-1.5 text-xs text-slate-500">
-                  <CalendarDays class="w-3.5 h-3.5" />
-                  อัปเดตล่าสุด {{ selectAnnouncements[0].date }}
-                </span>
               </p>
               <!-- ช่องค้นหาประกาศ -->
               <div class="relative w-full sm:w-72">
@@ -468,15 +494,10 @@
         />
         <section class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
           <template v-if="latestExam">
-            <!-- แถบเครื่องมือ: สรุปจำนวนประกาศ (เรียบง่าย ไม่มีกรอบ) + ช่องค้นหา -->
+            <!-- แถบเครื่องมือ: สรุปจำนวนประกาศ + ช่องค้นหา (เรียบง่าย ไม่มีกรอบ) -->
             <div class="mb-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-slate-200 pb-4">
               <p class="text-sm text-slate-600">
                 รวมประกาศการสอบแข่งขันทั้งหมด <span class="font-bold text-bma-700">{{ examAnnouncements.length }}</span> ฉบับ
-                <span class="select-none text-slate-300" aria-hidden="true"> · </span>
-                <span class="inline-flex items-center gap-1.5 text-xs text-slate-500">
-                  <CalendarDays class="w-3.5 h-3.5" />
-                  อัปเดตล่าสุด {{ latestExam.date }}
-                </span>
               </p>
               <!-- ช่องค้นหาประกาศ -->
               <div class="relative w-full sm:w-72">
@@ -618,32 +639,32 @@
             title="รายละเอียดประกาศ"
             :desc="detailAnnouncement.excerpt"
           />
-
-          <section class="max-w-4xl mx-auto px-4 sm:px-6 py-10">
-            <!-- ปุ่มย้อนกลับ -->
-            <button
-              type="button"
-              class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 hover:border-bma-300 hover:text-bma-700 transition-colors cursor-pointer"
-              @click="router.back()"
-            >
-              <ChevronRight class="w-4 h-4 rotate-180" />
-              ย้อนกลับ
-            </button>
-
+          <section class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
             <!-- เนื้อหาประกาศ -->
-            <article class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <article class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
               <!-- รูปประกอบประกาศ -->
               <img :src="coverUrl(detailAnnouncement)" :alt="detailAnnouncement.title" class="h-56 w-full object-cover sm:h-72" />
               <div class="p-5 sm:p-8 space-y-4">
-                <!-- แถวข้อมูล: ป้ายหมวด + วันที่ประกาศ -->
-                <div class="flex flex-wrap items-center gap-2">
-                  <span class="inline-flex items-center rounded-full bg-bma-50 text-bma-700 px-2.5 py-0.5 text-[10px] font-semibold ring-1 ring-bma-100">
-                    {{ detailAnnouncement.category === 'select' ? 'การคัดเลือก' : 'การสอบแข่งขัน' }}
-                  </span>
-                  <span class="inline-flex items-center gap-1.5 text-xs text-slate-500">
-                    <CalendarDays class="w-3.5 h-3.5" />
-                    ประกาศเมื่อวันที่ {{ detailAnnouncement.date }}
-                  </span>
+                <!-- แถวข้อมูล: ป้ายหมวด + วันที่ประกาศ (ซ้าย) และปุ่มย้อนกลับ (ขวา) -->
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="inline-flex items-center rounded-full bg-bma-50 text-bma-700 px-2.5 py-0.5 text-[10px] font-semibold ring-1 ring-bma-100">
+                      {{ detailAnnouncement.category === 'select' ? 'การคัดเลือก' : 'การสอบแข่งขัน' }}
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 text-xs text-slate-500">
+                      <CalendarDays class="w-3.5 h-3.5" />
+                      ประกาศเมื่อวันที่ {{ detailAnnouncement.date }}
+                    </span>
+                  </div>
+                  <!-- ปุ่มย้อนกลับ (ย้ายมาไว้มุมขวาบนของการ์ด) -->
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-500 hover:bg-bma-50 hover:text-bma-700 transition-colors cursor-pointer"
+                    @click="router.back()"
+                  >
+                    <ChevronRight class="w-4 h-4 rotate-180" />
+                    ย้อนกลับ
+                  </button>
                 </div>
                 <h2 class="text-lg sm:text-2xl font-bold text-slate-900 leading-snug">{{ detailAnnouncement.title }}</h2>
                 <!-- อ้างอิงหนังสือราชการ (ถ้ามี) -->
@@ -685,6 +706,48 @@
               </div>
             </article>
 
+            <!-- ตำแหน่งที่เปิดสมัคร (แยกตามประเภท พับ/กางได้) — แสดงเฉพาะประกาศที่มีข้อมูลตำแหน่ง -->
+            <div v-if="detailAnnouncement.positionGroups?.length" class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <div class="bg-bma-900 text-white px-5 sm:px-6 py-4 flex items-center justify-between gap-3">
+                <span class="inline-flex items-center gap-2 text-sm font-semibold">
+                  <ClipboardList class="w-4.5 h-4.5 text-sky-200" />
+                  ตำแหน่งที่เปิดสมัคร
+                </span>
+                <span class="hidden sm:inline text-[11px] text-sky-200/90">กด "{{ detailAnnouncement.category === 'exam' ? 'สมัครสอบ' : 'สมัครคัดเลือก' }}" ที่ตำแหน่งที่ต้องการ</span>
+              </div>
+              <div class="divide-y divide-slate-100">
+                <div v-for="(group, gi) in detailAnnouncement.positionGroups" :key="group.name">
+                  <!-- หัวข้อประเภท (กดพับ/กาง) -->
+                  <button
+                    type="button"
+                    class="flex w-full items-center gap-3 px-5 sm:px-6 py-3.5 text-left hover:bg-bma-50/40 transition-colors cursor-pointer"
+                    @click="expandedPositionGroup = expandedPositionGroup === gi ? null : gi"
+                  >
+                    <ChevronRight class="w-4 h-4 shrink-0 text-slate-400 transition-transform" :class="expandedPositionGroup === gi ? 'rotate-90' : ''" />
+                    <span class="text-sm font-bold text-slate-800">{{ group.name }}</span>
+                    <span class="text-xs text-slate-500">{{ group.positions.length }} ตำแหน่ง</span>
+                  </button>
+                  <!-- รายชื่อตำแหน่ง + ปุ่มสมัครสอบ -->
+                  <div v-if="expandedPositionGroup === gi" class="space-y-2 px-5 pb-4 sm:px-6">
+                    <div v-for="pos in group.positions" :key="pos.name" class="flex flex-wrap items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/60 px-4 py-3">
+                      <div class="min-w-0 flex-1">
+                        <p class="text-sm font-semibold text-slate-800">{{ pos.name }}</p>
+                        <p v-if="pos.quota" class="mt-0.5 text-[11px] text-slate-500">อัตรารับ {{ pos.quota }} อัตรา</p>
+                      </div>
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-1.5 rounded-xl bg-bma-700 hover:bg-bma-600 text-white text-xs font-semibold px-4 py-2.5 transition-colors cursor-pointer shrink-0"
+                        @click="handleApplyExam(pos.name)"
+                      >
+                        <UserPlus class="w-3.5 h-3.5" />
+                        {{ detailAnnouncement.category === 'exam' ? 'สมัครสอบ' : 'สมัครคัดเลือก' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- ประกาศอื่นๆ ในหมวดเดียวกัน (แถวเดียวกับ "ประกาศก่อนหน้า" ของหน้า การคัดเลือก/การสอบแข่งขัน) -->
             <div v-if="relatedAnnouncements.length" class="mt-8">
               <h3 class="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">ประกาศอื่นๆ ในหมวดเดียวกัน</h3>
@@ -718,6 +781,97 @@
         <!-- ไม่พบประกาศตาม id ที่ระบุ -->
         <section v-else class="max-w-4xl mx-auto px-4 sm:px-6 py-10">
           <EmptyState text="ไม่พบประกาศที่ต้องการ" />
+        </section>
+      </template>
+
+      <!-- ===== หน้า เข้าสู่ระบบผู้สมัคร (public — แยกจาก login ระบบภายใน /login) ===== -->
+      <template v-else-if="section === 'login'">
+        <section class="w-full max-w-md mx-auto px-4 sm:px-6 py-10 sm:py-16">
+          <div class="rounded-2xl border border-slate-200 bg-white shadow-sm p-6 sm:p-8">
+            <div class="text-center">
+              <div class="mx-auto w-12 h-12 rounded-2xl bg-bma-900 flex items-center justify-center shadow-sm overflow-hidden">
+                <img :src="siteLogo || logoUrl" alt="โลโก้ระบบสรรหา" class="w-full h-full object-cover" />
+              </div>
+              <h1 class="mt-4 text-lg sm:text-xl font-bold text-slate-900">เข้าสู่ระบบผู้สมัคร</h1>
+              <p class="mt-1.5 text-xs sm:text-sm text-slate-500 leading-relaxed">
+                สำหรับผู้สมัครเข้ารับการคัดเลือกและสอบแข่งขัน ตรวจสอบสถานะการสมัคร บัตรประจำตัวสอบ และผลการคัดเลือก
+              </p>
+            </div>
+
+            <form class="mt-7 space-y-4" @submit.prevent="handleRecruitSignIn">
+              <!-- เลขบัตรประชาชน หรือ อีเมล -->
+              <div>
+                <label for="recruit-account" class="block text-sm font-semibold text-slate-700 mb-1.5">เลขบัตรประชาชน หรือ อีเมล</label>
+                <input
+                  id="recruit-account"
+                  v-model="recruitAccount"
+                  type="text"
+                  autocomplete="username"
+                  placeholder="เช่น 1100123456789 หรือ name@email.com"
+                  class="w-full text-sm px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-bma-500/20 focus:border-bma-600 transition-all"
+                />
+              </div>
+
+              <!-- รหัสผ่าน -->
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label for="recruit-password" class="block text-sm font-semibold text-slate-700">รหัสผ่าน</label>
+                  <button
+                    type="button"
+                    class="text-xs font-medium text-bma-700 hover:text-bma-500 transition-colors cursor-pointer"
+                    @click="show('ระบบกู้คืนรหัสผ่านยังไม่เปิดใช้งาน')"
+                  >
+                    ลืมรหัสผ่าน?
+                  </button>
+                </div>
+                <div class="relative">
+                  <input
+                    id="recruit-password"
+                    v-model="recruitPassword"
+                    :type="showRecruitPassword ? 'text' : 'password'"
+                    autocomplete="current-password"
+                    placeholder="••••••••"
+                    class="w-full text-sm px-4 py-3 pr-11 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-bma-500/20 focus:border-bma-600 transition-all"
+                  />
+                  <button
+                    type="button"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                    :title="showRecruitPassword ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'"
+                    @click="showRecruitPassword = !showRecruitPassword"
+                  >
+                    <Eye v-if="!showRecruitPassword" class="w-5 h-5" />
+                    <EyeOff v-else class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              <!-- ปุ่มเข้าสู่ระบบ -->
+              <button
+                type="submit"
+                class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-bma-700 hover:bg-bma-600 text-white text-sm font-semibold px-4 py-3.5 transition-colors cursor-pointer"
+              >
+                <LogIn class="w-4 h-4" />
+                เข้าสู่ระบบ
+              </button>
+            </form>
+
+            <!-- ลงทะเบียนผู้สมัคร -->
+            <p class="mt-6 text-center text-xs text-slate-500">
+              ยังไม่มีบัญชี?
+              <button
+                type="button"
+                class="font-semibold text-bma-700 hover:text-bma-500 transition-colors cursor-pointer"
+                @click="show('ระบบลงทะเบียนผู้สมัครยังไม่เปิดใช้งาน')"
+              >
+                ลงทะเบียนผู้สมัคร
+              </button>
+            </p>
+          </div>
+
+          <!-- ช่องทางช่วยเหลือ -->
+          <p class="mt-5 text-center text-[11px] text-slate-400 leading-relaxed">
+            หากมีปัญหาการใช้งาน ติดต่อศูนย์รับสมัครสอบ 053-112-299
+          </p>
         </section>
       </template>
 
@@ -826,6 +980,8 @@ import {
   ChevronRight,
   ClipboardList,
   ExternalLink,
+  Eye,
+  EyeOff,
   FileText,
   GraduationCap,
   Headphones,
@@ -838,14 +994,17 @@ import {
   ScrollText,
   Search,
   UserPlus,
+  UserRound,
   X,
 } from 'lucide-vue-next';
 import logoUrl from '../assets/logo.png';
 import defaultBannerUrl from '../assets/banner-default.svg';
-import examCoverUrl from '../assets/announcement-exam.svg';
-import selectCoverUrl from '../assets/announcement-select.svg';
+import examCoverUrl from '../assets/announcement-exam.png';
+import selectCoverUrl from '../assets/announcement-select.png';
+import PageHero from '../components/recruitment/PageHero.vue';
 import { useToast } from '../composables/useToast';
 import { useRecruitmentSite } from '../composables/useRecruitmentSite';
+import { useRecruitmentAuth } from '../composables/useRecruitmentAuth';
 import {
   RECRUITMENT_ANNOUNCEMENTS,
   latestAnnouncement,
@@ -887,11 +1046,11 @@ const ORGANIZATIONS = [
 const mobileMenuOpen = ref(false);
 
 // --- ส่วนปัจจุบันของเว็บ (จาก path) ---
-const section = computed<'home' | 'select' | 'exam' | 'about' | 'detail'>(() => {
+const section = computed<'home' | 'select' | 'exam' | 'about' | 'detail' | 'login'>(() => {
   const sub = route.path.split('/')[2];
   // หน้ารายละเอียดประกาศ (/recruitment_site/announcement/:id) → section 'detail'
   if (sub === 'announcement') return 'detail';
-  if (sub === 'select' || sub === 'exam' || sub === 'about') return sub;
+  if (sub === 'select' || sub === 'exam' || sub === 'about' || sub === 'login') return sub;
   return 'home';
 });
 
@@ -978,27 +1137,45 @@ const relatedAnnouncements = computed(() => {
   return RECRUITMENT_ANNOUNCEMENTS.filter((a) => a.category === current.category && a.id !== current.id).slice(0, 3);
 });
 
+// --- เข้าสู่ระบบผู้สมัคร (เว็บสรรหา — แยกจาก useAuth ของระบบภายใน) ---
+const { isRecruitAuthenticated, recruitDisplayName, signIn: recruitSignIn, signOut: recruitSignOut } = useRecruitmentAuth();
+const recruitAccount = ref('');
+const recruitPassword = ref('');
+const showRecruitPassword = ref(false);
+const handleRecruitSignIn = () => {
+  const account = recruitAccount.value.trim();
+  if (account.length < 4) {
+    show('กรุณากรอกเลขบัตรประชาชนหรืออีเมลให้ครบถ้วน');
+    return;
+  }
+  if (!recruitPassword.value) {
+    show('กรุณากรอกรหัสผ่าน');
+    return;
+  }
+  // จำลอง: ใช้ส่วนหน้าของอีเมล หรือบัญชีที่กรอก เป็นชื่อแสดง
+  recruitSignIn(account.includes('@') ? account.split('@')[0] : account);
+  show('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับ');
+  router.push('/recruitment_site');
+};
+const handleRecruitSignOut = () => {
+  recruitSignOut();
+  show('ออกจากระบบแล้ว');
+  if (section.value === 'login') router.push('/recruitment_site');
+};
+
+// --- สมัครสอบในหน้ารายละเอียดประกาศ (กลุ่มประเภทตำแหน่ง พับ/กางได้ เปิดกลุ่มแรกไว้) ---
+const expandedPositionGroup = ref<number | null>(0);
+const handleApplyExam = (position: string) => {
+  if (!isRecruitAuthenticated.value) {
+    show('กรุณาเข้าสู่ระบบผู้สมัครก่อนสมัครสอบ');
+    router.push('/recruitment_site/login');
+    return;
+  }
+  show('สมัครตำแหน่ง' + position + ' — ระบบจำลอง ยังไม่เปิดใช้งานจริง');
+};
+
 // --- ส่วนประกอบย่อยของหน้า (local) ---
-// แบนเนอร์ย่อยด้านบนของแต่ละหน้าย่อย
-const PageHero = defineComponent({
-  props: { eyebrow: String, title: String, desc: String },
-  setup(props) {
-    return () =>
-      h('section', { class: 'bg-gradient-to-br from-bma-900 via-bma-800 to-bma-600 text-white' }, [
-        h('div', { class: 'max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14' }, [
-          props.eyebrow
-            ? h(
-                'span',
-                { class: 'inline-flex rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-semibold tracking-wide' },
-                props.eyebrow
-              )
-            : null,
-          h('h1', { class: 'mt-4 text-xl sm:text-3xl font-bold' }, props.title),
-          props.desc ? h('p', { class: 'mt-2.5 text-sm text-blue-100/85 max-w-2xl leading-relaxed' }, props.desc) : null,
-        ]),
-      ]);
-  },
-});
+// (แบนเนอร์ย่อย PageHero ย้ายไปเป็น SFC แยกที่ src/components/recruitment/PageHero.vue)
 
 // สถานะว่างเมื่อไม่มีประกาศ
 const EmptyState = defineComponent({

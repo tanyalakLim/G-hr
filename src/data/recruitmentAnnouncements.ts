@@ -2,11 +2,11 @@
 // แยกเป็น 2 หมวด: การคัดเลือก และ การสอบแข่งขัน — เรียงจากล่าสุดไปเก่าสุด
 
 // ภาพประกอบประกาศ (แต่ละประกาศมีรูปของตัวเอง ธีมตามเนื้อหา — ถ้าไม่ระบุจะใช้ภาพเริ่มต้นตามหมวด)
-import selectCoverUrl from '../assets/announcement-select.svg';
-import selectChecklistCoverUrl from '../assets/announcement-select-checklist.svg';
-import examCoverUrl from '../assets/announcement-exam.svg';
-import examScheduleCoverUrl from '../assets/announcement-exam-schedule.svg';
-import examResultCoverUrl from '../assets/announcement-exam-result.svg';
+import selectCoverUrl from '../assets/announcement-select.png';
+import selectChecklistCoverUrl from '../assets/announcement-select-checklist.png';
+import examCoverUrl from '../assets/announcement-exam.png';
+import examScheduleCoverUrl from '../assets/announcement-exam-schedule.png';
+import examResultCoverUrl from '../assets/announcement-exam-result.png';
 
 export type AnnouncementCategory = 'select' | 'exam';
 
@@ -14,6 +14,18 @@ export type AnnouncementCategory = 'select' | 'exam';
 export interface AnnouncementHighlight {
   label: string;
   value: string;
+}
+
+/** ตำแหน่งที่เปิดสมัคร 1 ตำแหน่ง (พร้อมจำนวนอัตรา ถ้ามี) */
+export interface AnnouncementPosition {
+  name: string;
+  quota?: number;
+}
+
+/** กลุ่มตำแหน่งแยกตามประเภท เช่น ประเภทวิชาการ / ประเภททั่วไป (แสดงในหน้ารายละเอียดประกาศ) */
+export interface AnnouncementPositionGroup {
+  name: string;
+  positions: AnnouncementPosition[];
 }
 
 export interface RecruitmentAnnouncement {
@@ -34,6 +46,8 @@ export interface RecruitmentAnnouncement {
   highlights?: AnnouncementHighlight[];
   /** อ้างอิงเอกสาร เช่น เลขที่หนังสือราชการ */
   reference?: string;
+  /** กลุ่มตำแหน่งที่เปิดสมัคร (ถ้ามี) — แสดงในหน้ารายละเอียดพร้อมปุ่มสมัครสอบ */
+  positionGroups?: AnnouncementPositionGroup[];
 }
 
 export const RECRUITMENT_ANNOUNCEMENTS: RecruitmentAnnouncement[] = [
@@ -125,6 +139,24 @@ export const RECRUITMENT_ANNOUNCEMENTS: RecruitmentAnnouncement[] = [
       'โปรดศึกษาคุณสมบัติ คุณลักษณะเฉพาะ และเอกสารประกอบการสมัครตามประกาศฉบับเต็มก่อนยื่นคำขอทุกครั้ง',
     ],
     attachments: ['ประกาศรับสมัคร ครั้งที่ 2-2569.pdf', 'คุณสมบัติและตำแหน่งที่เปิดคัดเลือก.pdf'],
+    // ตำแหน่งที่เปิดสมัคร แยกตามประเภท
+    positionGroups: [
+      {
+        name: 'ประเภทวิชาการ',
+        positions: [
+          { name: 'นักกายอุปกรณ์ปฏิบัติการ', quota: 5 },
+          { name: 'นักวิชาการศึกษา', quota: 6 },
+          { name: 'นักวิชาการสาธารณสุข', quota: 4 },
+        ],
+      },
+      {
+        name: 'ประเภททั่วไป',
+        positions: [
+          { name: 'นักจัดการงานทั่วไป', quota: 5 },
+          { name: 'เจ้าหน้าที่ธุรการ', quota: 8 },
+        ],
+      },
+    ],
     highlights: [
       { label: 'ช่องทางสมัคร', value: 'ระบบลงทะเบียนออนไลน์บนเว็บไซต์ระบบสรรหาบุคลากร' },
       { label: 'ข้อควรทราบ', value: 'แนบหลักฐานคุณสมบัติให้ครบถ้วนก่อนปิดรับสมัคร' },
@@ -142,6 +174,17 @@ export const RECRUITMENT_ANNOUNCEMENTS: RecruitmentAnnouncement[] = [
       'ผู้สมัครกรุณาศึกษาคุณสมบัติ คุณลักษณะเฉพาะ และเอกสารประกอบการสมัครให้ครบถ้วนก่อนยื่นสมัคร',
     ],
     attachments: ['ประกาศคัดเลือก 1-2569.pdf', 'คุณสมบัติและตำแหน่งที่เปิดรับ.pdf'],
+    // ตำแหน่งที่เปิดสมัคร แยกตามประเภท
+    positionGroups: [
+      {
+        name: 'ประเภทวิชาการ',
+        positions: [{ name: 'นักกายอุปกรณ์ปฏิบัติการ', quota: 4 }],
+      },
+      {
+        name: 'ประเภททั่วไป',
+        positions: [{ name: 'พนักงานทั่วไป', quota: 12 }],
+      },
+    ],
   },
 
   // --- การสอบแข่งขัน ---
@@ -159,6 +202,24 @@ export const RECRUITMENT_ANNOUNCEMENTS: RecruitmentAnnouncement[] = [
       'กำหนดการสอบ สถานที่สอบ และผลการสอบจะประกาศผ่านเว็บไซต์ระบบสรรหาบุคลากรโดยสรุปในลำดับถัดไป',
     ],
     attachments: ['ประกาศรอบสอบแข่งขัน 1-2570.pdf'],
+    // ตำแหน่งที่เปิดสมัคร แยกตามประเภท (รวม 85 อัตรา ตรงตาม highlights ด้านล่าง)
+    positionGroups: [
+      {
+        name: 'ประเภทวิชาการ',
+        positions: [
+          { name: 'นักกายอุปกรณ์ปฏิบัติการ', quota: 10 },
+          { name: 'นักวิทยาศาสตร์', quota: 8 },
+          { name: 'นักวิเคราะห์นโยบายและแผน', quota: 7 },
+        ],
+      },
+      {
+        name: 'ประเภททั่วไป',
+        positions: [
+          { name: 'เจ้าหน้าที่ธุรการ', quota: 20 },
+          { name: 'พนักงานทั่วไป', quota: 40 },
+        ],
+      },
+    ],
     highlights: [
       { label: 'ตำแหน่งที่เปิด', value: 'ประเภทวิชาการ ระดับปฏิบัติการ และประเภททั่วไป (เปิดรับ 85 อัตรา)' },
       { label: 'รับสมัคร', value: '1 – 25 พฤศจิกายน 2569' },

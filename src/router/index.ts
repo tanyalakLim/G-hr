@@ -193,6 +193,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'เว็บไซต์ระบบสรรหาบุคลากร' },
   },
   {
+    path: '/recruitment_site/login',
+    name: 'recruitment-site-login',
+    component: () => import('../views/RecruitmentPublicSiteView.vue'),
+    meta: { title: 'เข้าสู่ระบบผู้สมัคร — เว็บไซต์ระบบสรรหาบุคลากร' },
+  },
+  {
     path: '/recruitment_site/:section(select|exam|about)',
     name: 'recruitment-site-section',
     component: () => import('../views/RecruitmentPublicSiteView.vue'),
